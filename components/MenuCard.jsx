@@ -1,19 +1,28 @@
 // components/MenuCard.tsx
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, View, Image } from "react-native";
 import { Card, Text, Button, Avatar } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMugSaucer } from "@fortawesome/free-solid-svg-icons/faMugSaucer";
 import { PlusIcon } from "react-native-heroicons/outline";
 import { IconButton, MD3Colors } from "react-native-paper";
+import MenuCounter from "./MenuCounter";
 
 const MenuCard = ({ title, price, imageUrl, onAdd }) => {
+  const [menuCount, setMenuCount] = useState(0);
+
+  const tambahMenu = () => {
+    setMenuCount((prev) => prev + 1);
+  };
+
   return (
     <Card style={styles.card} mode="elevated">
       <View style={styles.content}>
-        <Avatar.Image
-          size={64}
-          source={{ uri: "https://i.ytimg.com/vi/j9a9EB0pGTo/sddefault.jpg?v=61236060" }}
+        <Image
+          source={{
+            uri: "https://image.makewebeasy.net/makeweb/r_1920x1920/MptBqGPQV/DefaultData/menu_rice_bowl_steak_ayam_crispy_dari_ZHENGDA.jpg?v=202405291424",
+          }}
+          style={styles.menuImage}
         />
         <View style={styles.details}>
           <Text style={styles.title}>{title}</Text>
@@ -22,14 +31,18 @@ const MenuCard = ({ title, price, imageUrl, onAdd }) => {
         {/* <Button mode="contained" style={styles.button} onPress={onAdd}>
           <PlusIcon size={10} color="#fff" />
         </Button> */}
-        <IconButton
-          icon="plus"
-          iconColor="#2D0052"
-          containerColor="#fcc800"
-          size={14} // ukuran ikon
-          style={styles.smallButton}
-          onPress={onAdd}
-        />
+        {menuCount === 0 ? (
+          <IconButton
+            icon="plus"
+            iconColor="#fff"
+            containerColor="#FF9800"
+            size={14} // ukuran ikon
+            style={styles.smallButton}
+            onPress={tambahMenu}
+          />
+        ) : (
+          <MenuCounter />
+        )}
       </View>
     </Card>
   );
@@ -72,9 +85,15 @@ const styles = StyleSheet.create({
   smallButton: {
     width: 30,
     height: 30,
-    borderRadius: 10,
-    elevation: 4,
+    borderRadius: 12,
+    elevation: 2,
     justifyContent: "center",
     alignItems: "center",
+  },
+  menuImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    objectFit: "cover",
   },
 });

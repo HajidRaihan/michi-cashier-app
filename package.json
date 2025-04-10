@@ -24,6 +24,7 @@
     "react-native": "0.76.9",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-heroicons": "^4.0.0",
+    "react-native-numeric-input": "^1.9.1",
     "react-native-paper": "^5.13.1",
     "react-native-ping": "^1.2.8",
     "react-native-safe-area-context": "^5.3.0",

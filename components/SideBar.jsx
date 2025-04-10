@@ -1,20 +1,58 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { HomeIcon, ListBulletIcon } from "react-native-heroicons/outline";
+import { useTheme } from "react-native-paper";
 
-const SideBar = () => {
+// Warna
+
+const SideBar = ({ activeMenu = "Home", onPress }) => {
+  const theme = useTheme();
   return (
     <View style={styles.sidebarContainer}>
       <View style={styles.sidebar}>
-        <View style={styles.iconContainer}>
-          <HomeIcon size={24} color={"#000"} />
-          <Text style={{ fontSize: 12 }}>Home</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <ListBulletIcon size={24} color={"#000"} />
-          <Text style={{ fontSize: 12 }}>Menu</Text>
-        </View>
+        <TouchableOpacity
+          style={[
+            styles.iconContainer,
+            activeMenu === "Home" && { backgroundColor: theme.colors.lightSecondary },
+          ]}
+          onPress={() => onPress("Home")}
+        >
+          <HomeIcon
+            size={24}
+            color={activeMenu === "Home" ? theme.colors.secondary : theme.colors.gray}
+          />
+          <Text
+            style={{
+              fontSize: 12,
+              color: activeMenu === "Home" ? theme.colors.secondary : theme.colors.gray,
+              fontWeight: activeMenu === "Home" ? "bold" : "normal",
+            }}
+          >
+            Home
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.iconContainer,
+            activeMenu === "Menu" && { backgroundColor: theme.colors.lightPrimary },
+          ]}
+          onPress={() => onPress("Menu")}
+        >
+          <ListBulletIcon
+            size={24}
+            color={activeMenu === "Menu" ? theme.colors.secondary : theme.colors.gray}
+          />
+          <Text
+            style={{
+              fontSize: 12,
+              color: activeMenu === "Menu" ? theme.colors.secondary : theme.colors.gray,
+              fontWeight: activeMenu === "Menu" ? "bold" : "normal",
+            }}
+          >
+            Menu
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -22,22 +60,18 @@ const SideBar = () => {
 
 const styles = StyleSheet.create({
   sidebarContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#fff",
   },
   sidebar: {
     width: 60,
-    height: "fit-content",
-
     borderRadius: 12,
-    marginRight: 10,
+    margin: 10,
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
   },
   iconContainer: {
     padding: 10,
-    backgroundColor: "#fff",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",

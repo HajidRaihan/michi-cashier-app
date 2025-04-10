@@ -8,6 +8,7 @@ const OrderCard = () => {
     <View style={styles.container}>
       <View>
         <Text style={{ fontWeight: "500" }}>Ayam Goreng krispi</Text>
+        <Text style={{ fontSize: 12 }}>x3</Text>
         <Text style={{ fontSize: 12 }}>Rp. 20.000</Text>
       </View>
       <IconButton
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
-    marginVertical: 8,
+    marginVertical: 5,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

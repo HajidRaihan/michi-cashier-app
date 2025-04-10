@@ -15,6 +15,10 @@ const MenuCard = ({ title, price, imageUrl, onAdd }) => {
     setMenuCount((prev) => prev + 1);
   };
 
+  const kurangMenu = () => {
+    setMenuCount((prev) => Math.max(0, prev - 1));
+  };
+
   return (
     <Card style={styles.card} mode="elevated">
       <View style={styles.content}>
@@ -41,7 +45,7 @@ const MenuCard = ({ title, price, imageUrl, onAdd }) => {
             onPress={tambahMenu}
           />
         ) : (
-          <MenuCounter />
+          <MenuCounter menuCount={menuCount} tambahMenu={tambahMenu} kurangMenu={kurangMenu} />
         )}
       </View>
     </Card>

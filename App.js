@@ -6,10 +6,45 @@ import OrderList from "./components/OrderList";
 import CardCategory from "./components/CardCategory";
 import { faMugSaucer } from "@fortawesome/free-solid-svg-icons";
 import { faBowlFood } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { addProductItem, getProductItems } from "./services/productService";
+import { Button } from "react-native-paper";
+
+const listMenu = {
+  nama: "ayam krispi",
+  harga: 1000,
+};
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("Makanan");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("fetching");
+        const result = await getProductItems();
+        console.log(result);
+        console.log("kjhjka");
+      } catch (error) {
+        console.error("❌ Error while fetching product items:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const tambahProduct = async () => {
+    try {
+      const result = await addProductItem({
+        name: "ayam geprek",
+        price: 10000,
+        image: "",
+      });
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <MainLayout>
       {/* Sidebar */}
@@ -46,6 +81,7 @@ export default function App() {
           <Text style={{ fontSize: 24, fontWeight: 500, marginVertical: 10 }}>
             Menu {activeCategory}
           </Text>
+          <Button onPress={tambahProduct}>Tambah</Button>
           <View style={styles.menuGrid}>
             {[...Array(20)].map((_, i) => (
               <MenuCard

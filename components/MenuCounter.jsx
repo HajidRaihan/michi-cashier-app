@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 
-const MenuCounter = ({ tambahMenu, kurangMenu, menuCount }) => {
+const MenuCounter = ({ id, tambahProdukOrder, product, kurangiProdukOrder }) => {
   const theme = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-      <TouchableOpacity onPress={tambahMenu} style={styles.button}>
+      <TouchableOpacity onPress={() => tambahProdukOrder(id)} style={styles.button}>
         <Text style={styles.symbol}>▲</Text>
       </TouchableOpacity>
 
-      <Text style={styles.count}>{menuCount}</Text>
+      <Text style={styles.count}>{product.quantity}</Text>
 
-      <TouchableOpacity onPress={kurangMenu} style={styles.button}>
+      <TouchableOpacity onPress={() => kurangiProdukOrder(id)} style={styles.button}>
         <Text style={styles.symbol}>▼</Text>
       </TouchableOpacity>
     </View>

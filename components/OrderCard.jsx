@@ -3,13 +3,13 @@ import { View, Text, StyleSheet } from "react-native";
 import { IconButton } from "react-native-paper";
 import { TrashIcon } from "react-native-heroicons/outline";
 
-const OrderCard = () => {
+const OrderCard = ({ item, deleteProdukOrder }) => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ fontWeight: "500" }}>Ayam Goreng krispi</Text>
-        <Text style={{ fontSize: 12 }}>x3</Text>
-        <Text style={{ fontSize: 12 }}>Rp. 20.000</Text>
+        <Text style={{ fontWeight: "500" }}>{item?.name}</Text>
+        <Text style={{ fontSize: 12 }}>x{item?.quantity}</Text>
+        <Text style={{ fontSize: 12 }}>Rp. {(item.price * item.quantity).toLocaleString()}</Text>
       </View>
       <IconButton
         icon={() => <TrashIcon size={14} color="#c70000" />}
@@ -17,7 +17,7 @@ const OrderCard = () => {
         containerColor="#f5f5f5"
         size={20} // ukuran ikon
         style={styles.smallButton}
-        // onPress={onAdd}
+        onPress={() => deleteProdukOrder(item?.id)}
       />
     </View>
   );

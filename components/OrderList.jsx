@@ -1,23 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import OrderCard from "./OrderCard";
 import { Button, useTheme } from "react-native-paper";
+import { printStruk } from "../lib/print";
 
-const OrderList = () => {
+const OrderList = ({ product, deleteProdukOrder }) => {
   const theme = useTheme();
+  const [total, setTotal] = useState();
+
+  const handlePrint = async () => {
+    const filteredProduct = product.filter((item) => item.quantity > 0);
+    if (filteredProduct.length === 0) {
+      Alert.alert("Tidak bisa cetak", "Tidak ada produk dengan jumlah lebih dari 0.");
+      return;
+    }
+
+    try {
+      await printStruk(filteredProduct);
+    } catch (error) {
+      console.error("Error printing:", error);
+    }
+  };
+
+  useEffect(() => {
+    setTotal(product?.reduce((total, item) => total + item.price * item.quantity, 0));
+  }, [product]);
   return (
     <View style={styles.orderDetails}>
       <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order Details</Text>
       <ScrollView style={styles.orderListContainer}>
+        {product?.map((item, index) => (
+          <OrderCard key={index} item={item} deleteProdukOrder={deleteProdukOrder} />
+        ))}
+        {/* <OrderCard />
         <OrderCard />
         <OrderCard />
         <OrderCard />
         <OrderCard />
         <OrderCard />
         <OrderCard />
-        <OrderCard />
-        <OrderCard />
-        <OrderCard />
+        <OrderCard /> */}
       </ScrollView>
       {/* <View style={styles.totalContainer}>
         <View
@@ -52,7 +74,7 @@ const OrderList = () => {
 
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>Rp. 200.000</Text>
+          <Text style={styles.totalValue}>Rp. {total?.toLocaleString()}</Text>
         </View>
 
         <View style={styles.buttonRow}>
@@ -64,12 +86,7 @@ const OrderList = () => {
           >
             Simpan
           </Button>
-          <Button
-            icon="printer"
-            style={styles.printButton}
-            mode="contained"
-            onPress={() => console.log("Cetak pressed")}
-          >
+          <Button icon="printer" style={styles.printButton} mode="contained" onPress={handlePrint}>
             Cetak
           </Button>
         </View>
@@ -82,7 +99,7 @@ const styles = StyleSheet.create({
   orderDetails: {
     width: 280,
     backgroundColor: "#fff",
-    borderRadius: 12,
+    // borderRadius: 12,
     padding: 16,
     overflow: "scroll",
     marginLeft: 8,

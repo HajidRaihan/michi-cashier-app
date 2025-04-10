@@ -1,5 +1,5 @@
 // components/MenuCard.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Card, Text, Button, Avatar } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -8,16 +8,33 @@ import { PlusIcon } from "react-native-heroicons/outline";
 import { IconButton, MD3Colors } from "react-native-paper";
 import MenuCounter from "./MenuCounter";
 
-const MenuCard = ({ title, price, imageUrl, onAdd }) => {
-  const [menuCount, setMenuCount] = useState(0);
+const MenuCard = ({
+  title,
+  id,
+  price,
+  imageUrl,
+  product,
+  tambahProdukOrder,
+  kurangiProdukOrder,
+}) => {
+  // const [menuCount, setMenuCount] = useState(0);
 
-  const tambahMenu = () => {
-    setMenuCount((prev) => prev + 1);
-  };
+  // const tambahMenu = () => {
+  //   setMenuCount((prev) => prev + 1);
+  //   tambahProdukOrder({
+  //     id: id,
+  //     name: title,
+  //     price: price,
+  //   });
+  // };
 
-  const kurangMenu = () => {
-    setMenuCount((prev) => Math.max(0, prev - 1));
-  };
+  // useEffect(() => {
+  //   console.log(product);
+  // }, [product.quantity]);
+
+  // const kurangMenu = () => {
+  //   setMenuCount((prev) => Math.max(0, prev - 1));
+  // };
 
   return (
     <Card style={styles.card} mode="elevated">
@@ -32,20 +49,26 @@ const MenuCard = ({ title, price, imageUrl, onAdd }) => {
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.price}>Rp. {price.toLocaleString()}</Text>
         </View>
-        {/* <Button mode="contained" style={styles.button} onPress={onAdd}>
+        {/* <Button mode="contained" style={styles.button} onPress={tambahProdukOrder}>
           <PlusIcon size={10} color="#fff" />
         </Button> */}
-        {menuCount === 0 ? (
+        {product.quantity === 0 ? (
           <IconButton
             icon="plus"
             iconColor="#fff"
             containerColor="#FF9800"
             size={14} // ukuran ikon
             style={styles.smallButton}
-            onPress={tambahMenu}
+            onPress={() => tambahProdukOrder(id)}
           />
         ) : (
-          <MenuCounter menuCount={menuCount} tambahMenu={tambahMenu} kurangMenu={kurangMenu} />
+          <MenuCounter
+            // menuCount={menuCount}
+            id={id}
+            product={product}
+            tambahProdukOrder={tambahProdukOrder}
+            kurangiProdukOrder={kurangiProdukOrder}
+          />
         )}
       </View>
     </Card>

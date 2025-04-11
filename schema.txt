@@ -1,0 +1,49 @@
+Struktur Database Michi Mini Chicken
+1. products
+Kolom	Tipe	Keterangan
+id	UUID (PK)	ID unik produk
+name	string	Nama produk utama
+category	enum	chicken_crispy, chicken_pop, mie_cian, drink, add_on, chicken_katsu
+base_price	number	Harga dasar produk (tanpa add-on)
+is_combo	boolean	Apakah ini menu combo/paket
+image_url	string	URL gambar
+description	text/null	Deskripsi opsional
+created_at	timestamp	
+2. product_variants
+Kolom	Tipe	Keterangan
+id	UUID (PK)	
+product_id	UUID (FK)	Relasi ke products
+variant_type	string	contoh: size, level, sauce, sambal
+variant_value	string	contoh: big, small, 5, cheese
+extra_price	number	Tambahan harga dari base price
+3. product_addons
+Untuk topping tambahan seperti: keju, sambal geprek, dll.
+
+Kolom	Tipe	Keterangan
+id	UUID (PK)	
+name	string	Nama add-on (ex: cheese sauce, sambal ijo)
+price	number	Harga add-on
+image_url	string	Opsional (bisa ditampilkan saat checkout)
+category	enum	sauce, topping, dll
+4. orders
+Kolom	Tipe	Keterangan
+id	UUID (PK)	
+created_at	timestamp	
+total_price	number	Jumlah akhir semua item
+payment_status	enum	pending, paid, cancelled
+5. order_items
+Kolom	Tipe	Keterangan
+id	UUID	
+order_id	UUID (FK)	
+product_id	UUID (FK)	Produk utama
+quantity	number	Jumlah item
+selected_variants	JSON	Contoh: [{type: "size", value: "big"}, {type: "level", value: "3"}]
+selected_addons	JSON	Contoh: [{id: "cheese123", name: "Cheese", price: 2000}]
+item_price	number	Harga final per item
+🔄 Flow Relasi
+scss
+Copy
+Edit
+products (1) —— (many) product_variants
+products (1) —— (many) order_items
+order_items (many) —— (1) orders

@@ -7,27 +7,51 @@ import CardCategory from "./components/CardCategory";
 import { faMugSaucer } from "@fortawesome/free-solid-svg-icons";
 import { faBowlFood } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { addProductItem, getProductItems } from "./services/productService";
-import { Button } from "react-native-paper";
+import {
+  addProductItem,
+  getAllProductsWithVariantsAndAddons,
+  getProductDetail,
+  getProductItems,
+} from "./services/productService";
+import { Button, Dialog, Portal } from "react-native-paper";
 import PrintDialog from "./components/PrintDialog";
+import ProductDialog from "./components/ProductDialog";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("Makanan");
   const [product, setProduct] = useState();
   const [orderProduk, setOrderProduk] = useState([]);
+  const [category, setCategory] = useState("makanan");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState("");
+  const [selectedAddons, setSelectedAddons] = useState([]);
+
+  const openProductDialogHandler = () => {
+    setOpenDialog((prev) => !prev); // toggle
+  };
+
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
+    setSelectedVariant(""); // Reset
+    setSelectedAddons([]);
+    setOpenDialog(true);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         console.log("fetching");
-        const result = await getProductItems();
-        console.log(result);
+        const result = await getAllProductsWithVariantsAndAddons();
+        // console.log({ result });
 
-        const dataWithQuantity = result.map((item) => ({
-          ...item,
-          quantity: 0,
-        }));
-        setProduct(dataWithQuantity);
+        // const dataWithQuantity = result.map((item) => ({
+        //   ...item,
+        //   quantity: 0,
+        // }));
+        console.log(JSON.stringify(result, null, 2));
+
+        setProduct(result.products);
         console.log("kjhjka");
       } catch (error) {
         console.error("❌ Error while fetching product items:", error);
@@ -36,14 +60,27 @@ export default function App() {
     fetchData();
   }, []);
 
+  const getDetail = async (productId) => {
+    try {
+      console.log("fetching produk");
+      const detailProduct = await getProductDetail(productId);
+      console.log({ detailProduct });
+      setOpenDialog(true);
+      setSelectedProduct(detailProduct);
+    } catch (error) {
+      console.error("❌ Error while fetching product items:", error);
+    }
+  };
+
   const tambahProduct = async () => {
     try {
       const result = await addProductItem({
-        name: "michi katsu",
+        name: "Boba Latte",
         price: 20000,
+        category: "minuman",
         image: "",
       });
-      console.log(result);
+      // console.table(result);
     } catch (err) {
       console.log(err);
     }
@@ -51,7 +88,7 @@ export default function App() {
 
   const tambahProdukOrder = (productId) => {
     setProduct(product.map((p) => (p.id === productId ? { ...p, quantity: p.quantity + 1 } : p)));
-    console.log(product);
+    // console.log(product);
     // const existingProduct = orderProduk.find((p) => p.id === product.id);
 
     // if (existingProduct) {
@@ -79,7 +116,34 @@ export default function App() {
     <MainLayout>
       {/* Sidebar */}
       <SideBar />
-      <PrintDialog />
+      {/* <PrintDialog /> */}
+      {/* <Portal>
+        <Dialog visible={openDialog} onDismiss={openProductDialogHandler}>
+          <Dialog.ScrollArea>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 24 }}>
+              <Text>This is a scrollable area</Text>
+              <Button onPress={openProductDialogHandler}></Button>
+            </ScrollView>
+          </Dialog.ScrollArea>
+        </Dialog>
+      </Portal> */}
+      {/* <DetailProductDialog visible={openDialog} onDismiss={openProductDialogHandler} /> */}
+      {/* <ProductDialog
+        visible={openDialog}
+        onDismiss={openProductDialogHandler}
+        product={selectedProduct}
+      /> */}
+      <ProductDialog
+        visible={openDialog}
+        onDismiss={() => setOpenDialog(false)}
+        product={selectedProduct}
+        selectedVariant={selectedVariant}
+        setSelectedVariant={setSelectedVariant}
+        selectedAddons={selectedAddons}
+        setSelectedAddons={setSelectedAddons}
+      />
+
+      {/* <Button onPress={openProductDialogHandler}>Open Dialog</Button> */}
 
       {/* Menu */}
       <View style={styles.menuContainer}>
@@ -110,18 +174,19 @@ export default function App() {
             />
           </View>
           <Text style={{ fontSize: 24, fontWeight: 500, marginVertical: 10 }}>
-            Menu {activeCategory}
+            Menu {activeCategory.toLowerCase()}
           </Text>
-          <Button onPress={tambahProduct}>Tambah</Button>
+          {/* <Button onPress={tambahProduct}>Tambah</Button> */}
           <View style={styles.menuGrid}>
             {product?.map((item) => (
               <MenuCard
                 key={item.id}
                 id={item.id}
                 title={item.name}
-                price={item.price}
+                price={item.base_price}
                 imageUrl={item.image}
                 product={item}
+                getProductDetail={getDetail}
                 tambahProdukOrder={tambahProdukOrder}
                 kurangiProdukOrder={kurangiProdukOrder}
               />

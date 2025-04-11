@@ -7,12 +7,14 @@ import { faMugSaucer } from "@fortawesome/free-solid-svg-icons/faMugSaucer";
 import { PlusIcon } from "react-native-heroicons/outline";
 import { IconButton, MD3Colors } from "react-native-paper";
 import MenuCounter from "./MenuCounter";
+import { getProductDetail } from "../services/productService";
 
 const MenuCard = ({
   title,
   id,
   price,
   imageUrl,
+  getProductDetail,
   product,
   tambahProdukOrder,
   kurangiProdukOrder,
@@ -52,24 +54,21 @@ const MenuCard = ({
         {/* <Button mode="contained" style={styles.button} onPress={tambahProdukOrder}>
           <PlusIcon size={10} color="#fff" />
         </Button> */}
-        {product.quantity === 0 ? (
-          <IconButton
-            icon="plus"
-            iconColor="#fff"
-            containerColor="#FF9800"
-            size={14} // ukuran ikon
-            style={styles.smallButton}
-            onPress={() => tambahProdukOrder(id)}
-          />
-        ) : (
-          <MenuCounter
+        <IconButton
+          icon="plus"
+          iconColor="#fff"
+          containerColor="#FF9800"
+          size={14} // ukuran ikon
+          style={styles.smallButton}
+          onPress={() => getProductDetail(id)}
+        />
+        {/* <MenuCounter
             // menuCount={menuCount}
             id={id}
             product={product}
             tambahProdukOrder={tambahProdukOrder}
             kurangiProdukOrder={kurangiProdukOrder}
-          />
-        )}
+          /> */}
       </View>
     </Card>
   );

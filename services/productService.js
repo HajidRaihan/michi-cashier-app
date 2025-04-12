@@ -1,5 +1,7 @@
 // services/orderService.js
+import { create } from "zustand";
 import { supabase } from "../lib/supabase";
+import { fetchAddons } from "./addonService";
 
 export const getProductItems = async () => {
   const { data, error } = await supabase.from("products").select("*");
@@ -100,6 +102,67 @@ export const getAllProductsWithVariantsAndAddons = async () => {
     };
   } catch (err) {
     console.error("Error fetching products with variants and addons:", err);
+    throw err;
+  }
+};
+// export const useProductListStore = create((set) => ({
+//   products: [],
+//   addons: [],
+//   loading: false,
+//   error: null,
+
+//   fetchAllProducts: async () => {
+//     set({ loading: true, error: null });
+
+//     try {
+//       const { data: products, error: productError } = await supabase.from("products").select("*");
+//       if (productError) throw productError;
+
+//       const { data: variants, error: variantError } = await supabase
+//         .from("product_variants")
+//         .select("*");
+//       if (variantError) throw variantError;
+
+//       const addons = await fetchAddons(); // gunakan service eksternal
+
+//       const productsWithVariants = products.map((product) => {
+//         const productVariants = variants.filter((v) => v.product_id === product.id);
+//         return {
+//           ...product,
+//           variants: productVariants,
+//         };
+//       });
+
+//       set({
+//         products: productsWithVariants,
+//         addons,
+//         loading: false,
+//       });
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//       set({ error: error.message, loading: false });
+//     }
+//   },
+
+//   fetchAddonsOnly: async () => {
+//     set({ loading: true, error: null });
+
+//     try {
+//       const addons = await fetchAddons();
+//       set({ addons, loading: false });
+//     } catch (error) {
+//       set({ error: error.message, loading: false });
+//     }
+//   },
+// }));
+
+export const fetchProducts = async () => {
+  try {
+    const { data: products, error } = await supabase.from("products").select("*");
+    if (error) throw error;
+    return products;
+  } catch (err) {
+    console.error("Error fetching products:", err);
     throw err;
   }
 };

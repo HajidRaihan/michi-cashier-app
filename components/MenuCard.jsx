@@ -9,16 +9,7 @@ import { IconButton, MD3Colors } from "react-native-paper";
 import MenuCounter from "./MenuCounter";
 import { getProductDetail } from "../services/productService";
 
-const MenuCard = ({
-  title,
-  id,
-  price,
-  imageUrl,
-  getProductDetail,
-  product,
-  tambahProdukOrder,
-  kurangiProdukOrder,
-}) => {
+const MenuCard = ({ handleProductClick, product }) => {
   // const [menuCount, setMenuCount] = useState(0);
 
   // const tambahMenu = () => {
@@ -48,8 +39,8 @@ const MenuCard = ({
           style={styles.menuImage}
         />
         <View style={styles.details}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.price}>Rp. {price.toLocaleString()}</Text>
+          <Text style={styles.title}>{product?.name}</Text>
+          <Text style={styles.price}>Rp. {product?.base_price.toLocaleString()}</Text>
         </View>
         {/* <Button mode="contained" style={styles.button} onPress={tambahProdukOrder}>
           <PlusIcon size={10} color="#fff" />
@@ -60,7 +51,7 @@ const MenuCard = ({
           containerColor="#FF9800"
           size={14} // ukuran ikon
           style={styles.smallButton}
-          onPress={() => getProductDetail(id)}
+          onPress={() => handleProductClick(product)}
         />
         {/* <MenuCounter
             // menuCount={menuCount}

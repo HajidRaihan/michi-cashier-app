@@ -3,10 +3,12 @@ import { StyleSheet, View, Text, ScrollView } from "react-native";
 import OrderCard from "./OrderCard";
 import { Button, useTheme } from "react-native-paper";
 import { printStruk } from "../lib/print";
+import { useOrderStore } from "../stores/orderStore";
 
 const OrderList = ({ product, deleteProdukOrder }) => {
   const theme = useTheme();
   const [total, setTotal] = useState();
+  const { orders, totalOrderPrice } = useOrderStore();
 
   const handlePrint = async () => {
     const filteredProduct = product.filter((item) => item.quantity > 0);
@@ -29,9 +31,10 @@ const OrderList = ({ product, deleteProdukOrder }) => {
     <View style={styles.orderDetails}>
       <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order Details</Text>
       <ScrollView style={styles.orderListContainer}>
-        {product?.map((item, index) => (
-          <OrderCard key={index} item={item} deleteProdukOrder={deleteProdukOrder} />
-        ))}
+        {orders.length > 0 &&
+          orders?.map((item, index) => (
+            <OrderCard key={index} item={item} deleteProdukOrder={deleteProdukOrder} />
+          ))}
         {/* <OrderCard />
         <OrderCard />
         <OrderCard />
@@ -74,7 +77,7 @@ const OrderList = ({ product, deleteProdukOrder }) => {
 
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>Rp. {total?.toLocaleString()}</Text>
+          <Text style={styles.totalValue}>Rp. {totalOrderPrice.toLocaleString()}</Text>
         </View>
 
         <View style={styles.buttonRow}>

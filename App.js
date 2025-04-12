@@ -16,6 +16,7 @@ import {
 import { Button, Dialog, Portal } from "react-native-paper";
 import PrintDialog from "./components/PrintDialog";
 import ProductDialog from "./components/ProductDialog";
+import { useProductListStore } from "./stores/productListStore";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("Makanan");
@@ -23,19 +24,22 @@ export default function App() {
   const [orderProduk, setOrderProduk] = useState([]);
   const [category, setCategory] = useState("makanan");
   const [openDialog, setOpenDialog] = useState(false);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState("");
   const [selectedAddons, setSelectedAddons] = useState([]);
+
+  const { products, loading, error, fetchAddonsOnly, fetchAllProducts } = useProductListStore();
 
   const openProductDialogHandler = () => {
     setOpenDialog((prev) => !prev); // toggle
   };
 
   const handleProductClick = (product) => {
+    setOpenDialog(true);
     setSelectedProduct(product);
     setSelectedVariant(""); // Reset
     setSelectedAddons([]);
-    setOpenDialog(true);
   };
 
   useEffect(() => {
@@ -43,13 +47,8 @@ export default function App() {
       try {
         console.log("fetching");
         const result = await getAllProductsWithVariantsAndAddons();
-        // console.log({ result });
 
-        // const dataWithQuantity = result.map((item) => ({
-        //   ...item,
-        //   quantity: 0,
-        // }));
-        console.log(JSON.stringify(result, null, 2));
+        // console.log(JSON.stringify(result, null, 2));
 
         setProduct(result.products);
         console.log("kjhjka");
@@ -58,6 +57,11 @@ export default function App() {
       }
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    fetchAllProducts();
+    fetchAddonsOnly();
   }, []);
 
   const getDetail = async (productId) => {
@@ -72,42 +76,6 @@ export default function App() {
     }
   };
 
-  const tambahProduct = async () => {
-    try {
-      const result = await addProductItem({
-        name: "Boba Latte",
-        price: 20000,
-        category: "minuman",
-        image: "",
-      });
-      // console.table(result);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const tambahProdukOrder = (productId) => {
-    setProduct(product.map((p) => (p.id === productId ? { ...p, quantity: p.quantity + 1 } : p)));
-    // console.log(product);
-    // const existingProduct = orderProduk.find((p) => p.id === product.id);
-
-    // if (existingProduct) {
-    //   // Kalau produk sudah ada, tambah count-nya
-    //   const updatedOrder = orderProduk.map((p) =>
-    //     p.id === product.id ? { ...p, count: (p.count || 1) + 1 } : p
-    //   );
-    //   setOrderProduk(updatedOrder);
-    // } else {
-    //   // Kalau produk belum ada, tambahkan dengan count = 1
-    //   setOrderProduk([...orderProduk, { ...product, count: 1 }]);
-    // }
-    // console.log(orderProduk);
-  };
-
-  const kurangiProdukOrder = (productId) => {
-    setProduct(product.map((p) => (p.id === productId ? { ...p, quantity: p.quantity - 1 } : p)));
-  };
-
   const deleteProdukOrder = (productId) => {
     setProduct(product.map((p) => (p.id === productId ? { ...p, quantity: (p.quantity = 0) } : p)));
   };
@@ -116,23 +84,7 @@ export default function App() {
     <MainLayout>
       {/* Sidebar */}
       <SideBar />
-      {/* <PrintDialog /> */}
-      {/* <Portal>
-        <Dialog visible={openDialog} onDismiss={openProductDialogHandler}>
-          <Dialog.ScrollArea>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 24 }}>
-              <Text>This is a scrollable area</Text>
-              <Button onPress={openProductDialogHandler}></Button>
-            </ScrollView>
-          </Dialog.ScrollArea>
-        </Dialog>
-      </Portal> */}
-      {/* <DetailProductDialog visible={openDialog} onDismiss={openProductDialogHandler} /> */}
-      {/* <ProductDialog
-        visible={openDialog}
-        onDismiss={openProductDialogHandler}
-        product={selectedProduct}
-      /> */}
+
       <ProductDialog
         visible={openDialog}
         onDismiss={() => setOpenDialog(false)}
@@ -142,8 +94,6 @@ export default function App() {
         selectedAddons={selectedAddons}
         setSelectedAddons={setSelectedAddons}
       />
-
-      {/* <Button onPress={openProductDialogHandler}>Open Dialog</Button> */}
 
       {/* Menu */}
       <View style={styles.menuContainer}>
@@ -178,28 +128,9 @@ export default function App() {
           </Text>
           {/* <Button onPress={tambahProduct}>Tambah</Button> */}
           <View style={styles.menuGrid}>
-            {product?.map((item) => (
-              <MenuCard
-                key={item.id}
-                id={item.id}
-                title={item.name}
-                price={item.base_price}
-                imageUrl={item.image}
-                product={item}
-                getProductDetail={getDetail}
-                tambahProdukOrder={tambahProdukOrder}
-                kurangiProdukOrder={kurangiProdukOrder}
-              />
+            {products?.map((item) => (
+              <MenuCard key={item.id} product={item} handleProductClick={handleProductClick} />
             ))}
-            {/* {[...Array(20)].map((_, i) => (
-              <MenuCard
-                key={i}
-                title="Click the button to watch on Jetflix app."
-                price={30000}
-                imageUrl="https://upload.wikimedia.org/wikipedia/en/0/0c/Spiderman_PS4_cover.jpg"
-                onAdd={() => console.log("Tambah ke keranjang")}
-              />
-            ))} */}
           </View>
         </ScrollView>
       </View>

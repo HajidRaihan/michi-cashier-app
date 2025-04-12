@@ -1,7 +1,6 @@
 // services/orderService.js
 import { create } from "zustand";
 import { supabase } from "../lib/supabase";
-import { fetchAddons } from "./addonService";
 
 export const getProductItems = async () => {
   const { data, error } = await supabase.from("products").select("*");
@@ -30,9 +29,6 @@ export const getProductDetail = async (productId) => {
     if (variantError) throw variantError;
 
     // Ambil semua add-ons
-    const { data: addons, error: addonError } = await supabase.from("product_addons").select("*");
-
-    if (addonError) throw addonError;
 
     // Gabungkan semua data
     return {
@@ -67,7 +63,7 @@ export const updateProductItem = async (id, item) => {
   if (error) throw error;
   return data;
 };
-export const getAllProductsWithVariantsAndAddons = async () => {
+export const getAllProductsWithVariants = async () => {
   try {
     // Ambil semua produk
     const { data: products, error: productError } = await supabase.from("products").select("*");
@@ -163,6 +159,61 @@ export const fetchProducts = async () => {
     return products;
   } catch (err) {
     console.error("Error fetching products:", err);
+    throw err;
+  }
+};
+
+export const fetchProductsWithVariants = async () => {
+  try {
+    // Mengambil produk beserta tipe dan pilihan variannya
+    const { data: products, error } = await supabase.from("products").select(`
+        *,
+        product_variant_types (
+          id,
+          variant_type_id,
+          variant_types (
+            name,
+            variant_options (
+              value,
+              extra_price
+            )
+          )
+        )
+      `);
+
+    if (error) throw error;
+
+    // console.log({ products });
+    // console.log(JSON.stringify(products, null, 3));
+
+    // Menyusun data dalam format yang lebih mudah digunakan
+    const formattedProducts = products.map((product) => {
+      return {
+        id: product.id,
+        name: product.name,
+        base_price: product.base_price,
+        description: product.description,
+        image_url: product.image_url,
+        category: product.category,
+        variants: product.product_variant_types.map((variantType) => {
+          return {
+            variantTypeName: variantType.variant_types.name,
+            options: variantType.variant_types.variant_options.map((option) => {
+              return {
+                optionValue: option.value,
+                extraPrice: option.extra_price,
+              };
+            }),
+          };
+        }),
+      };
+    });
+
+    // console.log(JSON.stringify(formattedProducts, null, 1));
+
+    return formattedProducts;
+  } catch (err) {
+    console.error("Error fetching products and variants:", err);
     throw err;
   }
 };

@@ -40,7 +40,7 @@ const MenuCard = ({ handleProductClick, product }) => {
         />
         <View style={styles.details}>
           <Text style={styles.title}>{product?.name}</Text>
-          <Text style={styles.price}>Rp. {product?.base_price.toLocaleString()}</Text>
+          <Text style={styles.price}>Rp. {product?.base_price.toLocaleString("id-ID")}</Text>
         </View>
         {/* <Button mode="contained" style={styles.button} onPress={tambahProdukOrder}>
           <PlusIcon size={10} color="#fff" />

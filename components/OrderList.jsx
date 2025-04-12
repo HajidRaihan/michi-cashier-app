@@ -5,36 +5,33 @@ import { Button, useTheme } from "react-native-paper";
 import { printStruk } from "../lib/print";
 import { useOrderStore } from "../stores/orderStore";
 
-const OrderList = ({ product, deleteProdukOrder }) => {
+const OrderList = ({ product }) => {
   const theme = useTheme();
   const [total, setTotal] = useState();
   const { orders, totalOrderPrice } = useOrderStore();
 
   const handlePrint = async () => {
-    const filteredProduct = product.filter((item) => item.quantity > 0);
-    if (filteredProduct.length === 0) {
-      Alert.alert("Tidak bisa cetak", "Tidak ada produk dengan jumlah lebih dari 0.");
-      return;
-    }
+    // const filteredProduct = product.filter((item) => item.quantity > 0);
+    // if (filteredProduct.length === 0) {
+    //   Alert.alert("Tidak bisa cetak", "Tidak ada produk dengan jumlah lebih dari 0.");
+    //   return;
+    // }
 
     try {
-      await printStruk(filteredProduct);
+      await printStruk(orders);
     } catch (error) {
       console.error("Error printing:", error);
     }
   };
 
   useEffect(() => {
-    setTotal(product?.reduce((total, item) => total + item.price * item.quantity, 0));
-  }, [product]);
+    console.log({ orders });
+  }, [orders]);
   return (
     <View style={styles.orderDetails}>
       <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order Details</Text>
       <ScrollView style={styles.orderListContainer}>
-        {orders.length > 0 &&
-          orders?.map((item, index) => (
-            <OrderCard key={index} item={item} deleteProdukOrder={deleteProdukOrder} />
-          ))}
+        {orders.length > 0 && orders?.map((item, index) => <OrderCard key={index} item={item} />)}
         {/* <OrderCard />
         <OrderCard />
         <OrderCard />
@@ -77,7 +74,7 @@ const OrderList = ({ product, deleteProdukOrder }) => {
 
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>Rp. {totalOrderPrice.toLocaleString()}</Text>
+          <Text style={styles.totalValue}>Rp. {totalOrderPrice.toLocaleString("id-ID")}</Text>
         </View>
 
         <View style={styles.buttonRow}>

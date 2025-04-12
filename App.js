@@ -7,16 +7,12 @@ import CardCategory from "./components/CardCategory";
 import { faMugSaucer } from "@fortawesome/free-solid-svg-icons";
 import { faBowlFood } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import {
-  addProductItem,
-  getAllProductsWithVariantsAndAddons,
-  getProductDetail,
-  getProductItems,
-} from "./services/productService";
+import { getProductDetail } from "./services/productService";
 import { Button, Dialog, Portal } from "react-native-paper";
 import PrintDialog from "./components/PrintDialog";
 import ProductDialog from "./components/ProductDialog";
 import { useProductListStore } from "./stores/productListStore";
+import { fetchProductsWithVariants } from "./services/variantService";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("Makanan");
@@ -27,9 +23,8 @@ export default function App() {
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState("");
-  const [selectedAddons, setSelectedAddons] = useState([]);
 
-  const { products, loading, error, fetchAddonsOnly, fetchAllProducts } = useProductListStore();
+  const { products, loading, error, fetchAllProducts } = useProductListStore();
 
   const openProductDialogHandler = () => {
     setOpenDialog((prev) => !prev); // toggle
@@ -39,60 +34,23 @@ export default function App() {
     setOpenDialog(true);
     setSelectedProduct(product);
     setSelectedVariant(""); // Reset
-    setSelectedAddons([]);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log("fetching");
-        const result = await getAllProductsWithVariantsAndAddons();
-
-        // console.log(JSON.stringify(result, null, 2));
-
-        setProduct(result.products);
-        console.log("kjhjka");
-      } catch (error) {
-        console.error("❌ Error while fetching product items:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     fetchAllProducts();
-    fetchAddonsOnly();
+    // fetchProductsWithVariants();
   }, []);
-
-  const getDetail = async (productId) => {
-    try {
-      console.log("fetching produk");
-      const detailProduct = await getProductDetail(productId);
-      console.log({ detailProduct });
-      setOpenDialog(true);
-      setSelectedProduct(detailProduct);
-    } catch (error) {
-      console.error("❌ Error while fetching product items:", error);
-    }
-  };
-
-  const deleteProdukOrder = (productId) => {
-    setProduct(product.map((p) => (p.id === productId ? { ...p, quantity: (p.quantity = 0) } : p)));
-  };
 
   return (
     <MainLayout>
       {/* Sidebar */}
       <SideBar />
+      <PrintDialog />
 
       <ProductDialog
         visible={openDialog}
         onDismiss={() => setOpenDialog(false)}
         product={selectedProduct}
-        selectedVariant={selectedVariant}
-        setSelectedVariant={setSelectedVariant}
-        selectedAddons={selectedAddons}
-        setSelectedAddons={setSelectedAddons}
       />
 
       {/* Menu */}
@@ -136,10 +94,7 @@ export default function App() {
       </View>
 
       {/* Order Details */}
-      <OrderList
-        product={product?.filter((p) => p.quantity > 0)}
-        deleteProdukOrder={deleteProdukOrder}
-      />
+      <OrderList product={product?.filter((p) => p.quantity > 0)} />
     </MainLayout>
   );
 }

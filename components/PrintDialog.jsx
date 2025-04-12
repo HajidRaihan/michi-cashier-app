@@ -75,6 +75,7 @@ const PrintDialog = () => {
 
   // Print sample text
   const printText = async () => {
+    console.log("trying print");
     if (!selectedPrinter) {
       Alert.alert("Error", "Please connect to a printer first.");
       return;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { IconButton } from "react-native-paper";
 import { TrashIcon } from "react-native-heroicons/outline";
@@ -8,31 +8,27 @@ const OrderCard = ({ item }) => {
   const { removeFromOrder } = useOrderStore();
 
   const handleRemove = () => {
-    removeFromOrder(item?.product_id, item?.variant_id);
+    removeFromOrder(item.product_id, item.variant_value);
   };
+
+  useEffect(() => {
+    console.log({ item });
+  }, [item]);
 
   return (
     <View style={styles.container}>
       <View>
         <Text style={{ fontWeight: "500" }}>{item.name}</Text>
         <Text style={{ fontSize: 12 }}>x{item.quantity}</Text>
-        {item.variant_id && (
+        {item.variant_type_name && (
           <Text style={{ fontSize: 12 }}>
-            {item.variant_type} : {item.variant_value}
+            {item.variant_type_name} : {item.variant_value}{" "}
+            {item.variant_extra_price > 0 && `(+Rp. ${item.variant_extra_price?.toLocaleString()})`}
           </Text>
         )}
+        <Text style={{ fontSize: 12 }}>catatan : {item.note}</Text>
 
-        {item.addons.length > 0 && (
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {item.addons.map((addon) => (
-              <Text key={addon.id} style={{ fontSize: 12, marginRight: 5 }}>
-                {addon.name} : +Rp. {addon.price?.toLocaleString()}
-              </Text>
-            ))}
-          </View>
-        )}
-
-        <Text style={{ fontSize: 12 }}>Rp. {item.total_price?.toLocaleString()}</Text>
+        <Text style={{ fontSize: 12 }}>Rp. {item.total_price?.toLocaleString("id-ID")}</Text>
       </View>
       <IconButton
         icon={() => <TrashIcon size={14} color="#c70000" />}

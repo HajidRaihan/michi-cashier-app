@@ -1,61 +1,75 @@
 import { Dialog, Portal, Text, Button, RadioButton, Checkbox, TextInput } from "react-native-paper";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
-import { useProductListStore } from "../stores/productListStore";
 import { useOrderStore } from "../stores/orderStore";
 
 const ProductDialog = ({ visible, onDismiss, product }) => {
-  const { addons } = useProductListStore();
   const { addToOrder } = useOrderStore();
 
   const [selectedVariant, setSelectedVariant] = useState();
-  const [selectedAddons, setSelectedAddons] = useState([]);
   const [quantity, setQuantity] = useState("1"); // disimpan dalam string karena TextInput
+  const [note, setNote] = useState("");
 
-  const handleSelectAddon = (addonId) => {
-    if (selectedAddons.includes(addonId)) {
-      setSelectedAddons(selectedAddons.filter((id) => id !== addonId));
-    } else {
-      setSelectedAddons([...selectedAddons, addonId]);
+  const [internalProduct, setInternalProduct] = useState(product);
+
+  useEffect(() => {
+    if (visible && product) {
+      setInternalProduct(product);
     }
-  };
+  }, [visible, product]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const qty = parseInt(quantity) || 1;
 
-    const variant = product?.variants?.find((v) => v.id === selectedVariant);
-    const selectedAddonObjects = addons.filter((addon) => selectedAddons.includes(addon.id));
+    let variant = undefined;
+    let variant_type = undefined;
 
-    addToOrder({
+    if (product?.variants?.length > 0) {
+      variant = product.variants[0]?.options.find((v) => v.optionValue === selectedVariant);
+      variant_type = product.variants[0]?.variantTypeName;
+
+      if (!variant) {
+        console.warn("Varian belum dipilih");
+        return; // jika varian harus dipilih, batalkan
+      }
+    }
+
+    await addToOrder({
       product_id: product.id,
       name: product.name,
       base_price: product.base_price,
       variant,
-      addons: selectedAddonObjects,
+      variant_type,
       quantity: qty,
-      total_price: calculateTotalPrice(), // kirim totalnya dari komponen
+      total_price: calculateTotalPrice(),
+      note,
     });
 
-    onDismiss(); // tutup dialog
-    resetForm(); // reset setelah tambah
+    onDismiss();
+    // resetForm();
   };
+
+  useEffect(() => {
+    if (visible) {
+      // Reset form hanya ketika dialog dibuka
+      resetForm();
+    }
+  }, [visible]);
 
   const resetForm = () => {
     setSelectedVariant();
-    setSelectedAddons([]);
     setQuantity("1");
+    setNote("");
   };
 
   const calculateTotalPrice = () => {
     const qty = parseInt(quantity) || 1;
     const basePrice = product?.base_price || 0;
-    const variantPrice = product?.variants?.find((v) => v.id === selectedVariant)?.extra_price || 0;
-    const addonsPrice =
-      addons
-        ?.filter((addon) => selectedAddons.includes(addon.id))
-        ?.reduce((total, addon) => total + addon.price, 0) || 0;
-
-    const totalPrice = (basePrice + variantPrice + addonsPrice) * qty;
+    console.log({ selectedVariant });
+    const variantPrice =
+      product?.variants[0]?.options.find((v) => v.optionValue === selectedVariant)?.extraPrice || 0;
+    console.log(variantPrice);
+    const totalPrice = (basePrice + variantPrice) * qty;
 
     return totalPrice;
   };
@@ -66,43 +80,33 @@ const ProductDialog = ({ visible, onDismiss, product }) => {
         <Dialog.Title>{product?.name}</Dialog.Title>
         <Dialog.ScrollArea>
           <ScrollView>
-            <Text style={{ marginTop: 16, marginBottom: 8 }}>
-              Harga dasar: Rp. {product?.base_price}
+            <Text style={{ marginTop: 16, marginBottom: 8, fontWeight: "bold", fontSize: 16 }}>
+              Harga dasar: Rp. {product?.base_price.toLocaleString("id-ID")}
             </Text>
 
             {/* VARIANTS */}
             {product?.variants?.length > 0 && (
               <View style={{ marginBottom: 16 }}>
-                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>Pilih Variant:</Text>
+                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
+                  Pilih {product.variants[0].variantTypeName} :
+                </Text>
                 <RadioButton.Group
                   onValueChange={(value) => setSelectedVariant(value)}
                   value={selectedVariant}
                 >
-                  {product.variants.map((variant) => (
+                  {product.variants[0].options?.map((variant) => (
                     <RadioButton.Item
-                      key={variant.id}
-                      label={`${variant.variant_type === "level" ? "Level" : "Ukuran"} ${
-                        variant.variant_value
-                      } ${variant.extra_price > 0 ? `( +Rp. ${variant.extra_price} )` : ""}`}
-                      value={variant.id}
+                      key={variant.optionValue}
+                      // label={`${variant.variant_type === "level" ? "Level" : "Ukuran"} ${
+                      //   variant.variant_value
+                      // } ${variant.extra_price > 0 ? `( +Rp. ${variant.extra_price} )` : ""}`}
+                      label={`${variant.optionValue} ${
+                        variant.extraPrice > 0 ? `( +Rp. ${variant.extraPrice} )` : ""
+                      }`}
+                      value={variant.optionValue}
                     />
                   ))}
                 </RadioButton.Group>
-              </View>
-            )}
-
-            {/* ADDONS */}
-            {addons?.length > 0 && (
-              <View style={{ marginBottom: 16 }}>
-                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>Tambahan:</Text>
-                {addons.map((addon) => (
-                  <Checkbox.Item
-                    key={addon.id}
-                    label={`${addon.name} (+Rp. ${addon.price})`}
-                    status={selectedAddons.includes(addon.id) ? "checked" : "unchecked"}
-                    onPress={() => handleSelectAddon(addon.id)}
-                  />
-                ))}
               </View>
             )}
 
@@ -117,10 +121,19 @@ const ProductDialog = ({ visible, onDismiss, product }) => {
               />
             </View>
 
+            <View style={{ marginBottom: 16 }}>
+              <TextInput
+                label="Catatan"
+                value={note}
+                onChangeText={(text) => setNote(text)}
+                mode="outlined"
+              />
+            </View>
+
             {/* TOTAL */}
             <View style={{ marginBottom: 16 }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Total Harga: Rp. {calculateTotalPrice()}
+                Total Harga: Rp. {calculateTotalPrice().toLocaleString("id-ID")}
               </Text>
             </View>
           </ScrollView>
@@ -140,7 +153,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "90%",
     maxWidth: 600,
-    height: "80%",
+    maxHeight: "80%",
     borderRadius: 16,
     backgroundColor: "#ffffff",
   },

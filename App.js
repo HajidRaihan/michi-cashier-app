@@ -11,8 +11,10 @@ import { getProductDetail } from "./services/productService";
 import { Button, Dialog, Portal } from "react-native-paper";
 import PrintDialog from "./components/PrintDialog";
 import ProductDialog from "./components/ProductDialog";
+import DialogTest from "./components/DialogTest";
 import { useProductListStore } from "./stores/productListStore";
 import { fetchProductsWithVariants } from "./services/variantService";
+import AlertDialog from "./components/Alert";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("Makanan");
@@ -45,7 +47,7 @@ export default function App() {
     <MainLayout>
       {/* Sidebar */}
       <SideBar />
-      <PrintDialog />
+      {/* <PrintDialog /> */}
 
       <ProductDialog
         visible={openDialog}

@@ -4,11 +4,22 @@ import OrderCard from "./OrderCard";
 import { Button, useTheme } from "react-native-paper";
 import { printStruk } from "../lib/print";
 import { useOrderStore } from "../stores/orderStore";
+import { createOrder } from "../services/orderService";
 
 const OrderList = ({ product }) => {
   const theme = useTheme();
   const [total, setTotal] = useState();
   const { orders, totalOrderPrice } = useOrderStore();
+
+  const handleOrder = async () => {
+    try {
+      const order = await createOrder();
+      console.log("order berhasil", order);
+      console.log("lkjl");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePrint = async () => {
     // const filteredProduct = product.filter((item) => item.quantity > 0);
@@ -82,13 +93,13 @@ const OrderList = ({ product }) => {
             icon="content-save"
             style={styles.saveButton}
             mode="contained"
-            onPress={() => console.log("Simpan pressed")}
+            onPress={handleOrder}
           >
             Simpan
           </Button>
-          <Button icon="printer" style={styles.printButton} mode="contained" onPress={handlePrint}>
+          {/* <Button icon="printer" style={styles.printButton} mode="contained" onPress={handlePrint}>
             Cetak
-          </Button>
+          </Button> */}
         </View>
       </View>
     </View>

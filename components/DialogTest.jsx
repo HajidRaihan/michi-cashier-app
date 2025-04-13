@@ -1,38 +1,84 @@
-import React, { useRef } from "react";
-import { ScrollView, View } from "react-native";
-import { Dialog, Portal, Text, TextInput } from "react-native-paper";
-
+import React, { useState } from "react";
+import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
+import { TextInput } from "react-native-paper";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 const DialogTest = () => {
-  const noteRef = useRef(""); // Menggunakan useRef untuk menyimpan catatan
-  const visibleRef = useRef(true); // Menggunakan useRef untuk visibilitas
-
-  const hideDialog = () => {
-    visibleRef.current = false; // Menggunakan ref untuk mengatur visibilitas
-  };
-
-  const handleNoteChange = (text) => {
-    noteRef.current = text; // Simpan nilai input tanpa memicu re-render
-  };
-
+  const [modalVisible, setModalVisible] = useState(true);
+  const [note, setNote] = useState();
   return (
-    <Portal>
-      <Dialog visible={visibleRef.current} onDismiss={hideDialog}>
-        <Dialog.ScrollArea>
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 24 }}>
-            <Text>This is a scrollable area</Text>
-            <View style={{ marginBottom: 16 }}>
-              <TextInput
-                label="Catatan"
-                value={noteRef.current} // Menggunakan useRef untuk nilai input
-                onChangeText={handleNoteChange} // Mengubah nilai input tanpa render ulang
-                mode="outlined"
-              />
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={{ marginBottom: 16 }}></View>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Hello World!</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
             </View>
-          </ScrollView>
-        </Dialog.ScrollArea>
-      </Dialog>
-    </Portal>
+          </View>
+        </Modal>
+        <Pressable style={[styles.button, styles.buttonOpen]} onPress={() => setModalVisible(true)}>
+          <Text style={styles.textStyle}>Show Modal</Text>
+        </Pressable>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+});
 
 export default DialogTest;

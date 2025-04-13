@@ -13,7 +13,7 @@ const OrderList = ({ product }) => {
 
   const handleOrder = async () => {
     try {
-      const order = await createOrder();
+      const order = await createOrder(orders, totalOrderPrice);
       console.log("order berhasil", order);
       console.log("lkjl");
     } catch (error) {

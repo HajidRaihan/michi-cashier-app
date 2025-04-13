@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getOrders } from "../services/orderService";
 
 export const useOrderStore = create((set) => ({
   orders: [],
@@ -119,4 +120,29 @@ export const useOrderStore = create((set) => ({
       }),
     })),
   clearOrders: () => set({ orders: [] }),
+}));
+
+export const useOrderListStore = create((set) => ({
+  orders: [],
+  loading: false,
+  error: null,
+
+  fetcAllOrders: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const orders = await getOrders();
+
+      console.log("orders", orders);
+      console.log(JSON.stringify(orders, null, 2));
+
+      set({
+        orders: orders,
+        loading: false,
+      });
+    } catch (error) {
+      console.error("Error fetching product list:", error);
+      set({ error: error.message, loading: false });
+    }
+  },
 }));

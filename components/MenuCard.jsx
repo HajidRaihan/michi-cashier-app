@@ -1,34 +1,10 @@
 // components/MenuCard.tsx
-import { useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Card, Text, Button, Avatar } from "react-native-paper";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMugSaucer } from "@fortawesome/free-solid-svg-icons/faMugSaucer";
-import { PlusIcon } from "react-native-heroicons/outline";
+
 import { IconButton, MD3Colors } from "react-native-paper";
-import MenuCounter from "./MenuCounter";
-import { getProductDetail } from "../services/productService";
 
 const MenuCard = ({ handleProductClick, product }) => {
-  // const [menuCount, setMenuCount] = useState(0);
-
-  // const tambahMenu = () => {
-  //   setMenuCount((prev) => prev + 1);
-  //   tambahProdukOrder({
-  //     id: id,
-  //     name: title,
-  //     price: price,
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   console.log(product);
-  // }, [product.quantity]);
-
-  // const kurangMenu = () => {
-  //   setMenuCount((prev) => Math.max(0, prev - 1));
-  // };
-
   return (
     <Card style={styles.card} mode="elevated">
       <View style={styles.content}>

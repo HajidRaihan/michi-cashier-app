@@ -1,7 +1,6 @@
 // services/orderService.js
 import { supabase } from "../lib/supabase";
 import { v4 as uuidv4 } from "uuid"; // Untuk generate ID unik
-import { useOrderStore } from "../stores/orderStore";
 import { generateTimeBasedId } from "../lib/generateId";
 
 export async function getMenuItems() {
@@ -10,8 +9,24 @@ export async function getMenuItems() {
   return data;
 }
 
-export const createOrder = async () => {
-  const { orders, totalOrderPrice } = useOrderStore.getState();
+export const getOrderItems = async () => {
+  const { data, error } = await supabase.from("order_items").select("*");
+  if (error) throw error;
+  return data;
+};
+
+export const getOrders = async () => {
+  const { data, error } = await supabase.from("orders").select(`
+      *,
+      order_items(*)
+    `);
+
+  if (error) throw error;
+  return data;
+};
+
+export const createOrder = async (orders, totalOrderPrice) => {
+  // const { orders, totalOrderPrice } = useOrderStore.getState();
 
   if (orders.length === 0) {
     console.warn("Tidak ada item dalam pesanan.");

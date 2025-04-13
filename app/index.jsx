@@ -54,7 +54,7 @@ export default function Home() {
             />
           </View>
 
-          <Text style={styles.menuTitle}>Menu augg {activeCategory.toLowerCase()}</Text>
+          <Text style={styles.menuTitle}>Menu {activeCategory.toLowerCase()}</Text>
 
           <View style={styles.menuGrid}>
             {products?.map((item) => (

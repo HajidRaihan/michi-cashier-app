@@ -21,11 +21,11 @@ const CardCategory = ({ title, isActive = false, onPress, icon = faMugSaucer }) 
       ]}
     >
       <View style={styles.content}>
-        <FontAwesomeIcon
+        {/* <FontAwesomeIcon
           icon={icon}
           color={isActive ? theme.colors.secondary : theme.colors.gray}
           size={24}
-        />
+        /> */}
         <Text
           style={[styles.text, { color: isActive ? theme.colors.secondary : theme.colors.text }]}
         >
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     padding: 12,
-    width: 200,
-    marginVertical: 6,
+    // width: 100,
+    // marginVertical: 6,
   },
   content: {
     flexDirection: "row",
@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: "600",
-    marginLeft: 12,
+    // marginLeft: 12,
   },
 });

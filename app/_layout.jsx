@@ -2,6 +2,7 @@ import { PaperProvider, MD3LightTheme } from "react-native-paper";
 import { Stack } from "expo-router";
 import SideBar from "../components/SideBar";
 import { View, StyleSheet } from "react-native";
+import ScanPrintDialog from "../components/ScanPrintDialog";
 
 const theme = {
   ...MD3LightTheme,
@@ -19,6 +20,7 @@ export default function Layout() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
+        {/* <ScanPrintDialog /> */}
         <SideBar />
         <View style={styles.content}>
           <Stack screenOptions={{ headerShown: false, animation: "none" }} />

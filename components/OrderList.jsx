@@ -5,11 +5,13 @@ import { Button, useTheme } from "react-native-paper";
 import { printStruk } from "../lib/print";
 import { useOrderStore } from "../stores/orderStore";
 import { createOrder } from "../services/orderService";
+import PrintDialog from "./PrintDialog";
 
 const OrderList = ({ product }) => {
   const theme = useTheme();
   const [total, setTotal] = useState();
   const { orders, totalOrderPrice } = useOrderStore();
+  const [openPrintDialog, setOpenPrintDialog] = useState(false);
 
   const handleOrder = async () => {
     try {
@@ -38,8 +40,14 @@ const OrderList = ({ product }) => {
   useEffect(() => {
     console.log({ orders });
   }, [orders]);
+
   return (
     <View style={styles.orderDetails}>
+      <PrintDialog
+        handlePrint={handlePrint}
+        visible={openPrintDialog}
+        onDismiss={() => setOpenPrintDialog(false)}
+      />
       <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order Details</Text>
       <ScrollView style={styles.orderListContainer}>
         {orders.length > 0 && orders?.map((item, index) => <OrderCard key={index} item={item} />)}
@@ -62,9 +70,14 @@ const OrderList = ({ product }) => {
           >
             Simpan
           </Button>
-          {/* <Button icon="printer" style={styles.printButton} mode="contained" onPress={handlePrint}>
+          <Button
+            icon="printer"
+            style={styles.printButton}
+            mode="contained"
+            onPress={() => setOpenPrintDialog(true)}
+          >
             Cetak
-          </Button> */}
+          </Button>
         </View>
       </View>
     </View>
@@ -73,7 +86,7 @@ const OrderList = ({ product }) => {
 
 const styles = StyleSheet.create({
   orderDetails: {
-    width: 280,
+    width: 300,
     backgroundColor: "#fff",
     // borderRadius: 12,
     padding: 16,
@@ -84,7 +97,7 @@ const styles = StyleSheet.create({
   orderListContainer: {
     gap: 10,
     padding: 1,
-    marginBottom: 200,
+    marginBottom: 150,
   },
 
   totalContainer: {

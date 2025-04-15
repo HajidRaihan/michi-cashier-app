@@ -6,13 +6,15 @@ import CardCategory from "../components/CardCategory";
 import { faMugSaucer, faBowlFood } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import ProductDialog from "../components/ProductDialog";
+import PrintDialog from "../components/ScanPrintDialog";
 import { useProductListStore } from "../stores/productListStore";
 
 export default function Home() {
+  const category = ["Chicken Crispy", "Chicken Pop", "Chicken Katsu", "Mie Cian", "Drink", "Addon"];
   const [activeCategory, setActiveCategory] = useState("Makanan");
   const [product, setProduct] = useState();
   const [orderProduk, setOrderProduk] = useState([]);
-  const [category, setCategory] = useState("makanan");
+  // const [category, setCategory] = useState("makanan");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState("");
@@ -40,7 +42,15 @@ export default function Home() {
       <View style={styles.menuContainer}>
         <ScrollView style={styles.menuScroll}>
           <View style={styles.categoryWrapper}>
-            <CardCategory
+            {category?.map((item) => (
+              <CardCategory
+                key={item}
+                title={item}
+                isActive={activeCategory === item}
+                onPress={() => setActiveCategory(item)}
+              />
+            ))}
+            {/* <CardCategory
               title="Makanan"
               icon={faBowlFood}
               isActive={activeCategory === "Makanan"}
@@ -51,7 +61,7 @@ export default function Home() {
               icon={faMugSaucer}
               isActive={activeCategory === "Minuman"}
               onPress={() => setActiveCategory("Minuman")}
-            />
+            /> */}
           </View>
 
           <Text style={styles.menuTitle}>Menu {activeCategory.toLowerCase()}</Text>

@@ -1,78 +1,67 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Animated } from "react-native";
-import { HomeIcon, ListBulletIcon } from "react-native-heroicons/outline";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { HomeIcon, ListBulletIcon, NewspaperIcon } from "react-native-heroicons/outline";
 import { useTheme } from "react-native-paper";
 import { useRouter, usePathname } from "expo-router";
 
-const SideBar = ({ activeMenu = "Home", onPress }) => {
+const SideBar = () => {
   const theme = useTheme();
   const router = useRouter();
   const pathname = usePathname();
-  const [active, setActive] = useState(activeMenu);
+  const [active, setActive] = useState("Home");
 
-  // Animated values
-  const fadeAnim = new Animated.Value(0);
+  const menuItems = [
+    {
+      name: "Home",
+      route: "/",
+      icon: HomeIcon,
+    },
+    {
+      name: "Orders",
+      route: "/orders",
+      icon: NewspaperIcon,
+    },
+    {
+      name: "Menu",
+      route: "/menu",
+      icon: ListBulletIcon,
+    },
+  ];
 
   useEffect(() => {
-    // Update active menu based on pathname
-    if (pathname === "/") {
-      setActive("Home");
-    } else if (pathname === "/orders") {
-      setActive("Menu");
-    }
-
-    // Trigger fade-in animation when menu changes
+    const found = menuItems.find((item) => item.route === pathname);
+    if (found) setActive(found.name);
   }, [pathname]);
 
   return (
     <View style={styles.sidebarContainer}>
       <View style={styles.sidebar}>
-        <TouchableOpacity
-          style={[
-            styles.iconContainer,
-            active === "Home" && { backgroundColor: theme.colors.lightSecondary },
-          ]}
-          onPress={() => router.push("/")}
-        >
-          <HomeIcon
-            size={24}
-            color={active === "Home" ? theme.colors.secondary : theme.colors.gray}
-          />
-          <Text
-            style={{
-              fontSize: 12,
-              color: active === "Home" ? theme.colors.secondary : theme.colors.gray,
-              fontWeight: active === "Home" ? "bold" : "normal",
-            }}
-          >
-            Home
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.iconContainer,
-            active === "Menu" && { backgroundColor: theme.colors.lightSecondary },
-          ]}
-          onPress={() => router.push("/orders")}
-        >
-          <ListBulletIcon
-            size={24}
-            color={active === "Menu" ? theme.colors.secondary : theme.colors.gray}
-          />
-          <Text
-            style={{
-              fontSize: 12,
-              color: active === "Menu" ? theme.colors.secondary : theme.colors.gray,
-              fontWeight: active === "Menu" ? "bold" : "normal",
-            }}
-          >
-            Orders
-          </Text>
-        </TouchableOpacity>
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = active === item.name;
+          return (
+            <TouchableOpacity
+              key={item.name}
+              style={[
+                styles.iconContainer,
+                isActive && { backgroundColor: theme.colors.lightSecondary },
+              ]}
+              onPress={() => router.push(item.route)}
+            >
+              <Icon size={24} color={isActive ? theme.colors.secondary : theme.colors.gray} />
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: isActive ? theme.colors.secondary : theme.colors.gray,
+                  fontWeight: isActive ? "bold" : "normal",
+                }}
+              >
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-
-      {/* Animated Fade-In Effect */}
     </View>
   );
 };

@@ -1,0 +1,5 @@
+todo : 
+- berikan keterangan untuk outlet nya.
+- input pengeluaran setiap belanja. untuk hitung keuntungan (HPP).
+- filter order harian, bulanan, dan tahunan
+- crud product, variant

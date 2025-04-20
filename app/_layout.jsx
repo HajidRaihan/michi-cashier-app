@@ -23,7 +23,16 @@ export default function Layout() {
         {/* <ScanPrintDialog /> */}
         <SideBar />
         <View style={styles.content}>
-          <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+          {/* <Stack screenOptions={{ headerShown: false, animation: "none" }} /> */}
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false, animation: "none" }} />
+            <Stack.Screen name="orders" options={{ headerShown: false, animation: "none" }} />
+            <Stack.Screen name="menu" options={{ headerShown: false, animation: "none" }} />
+            <Stack.Screen
+              name="menuForm"
+              options={{ headerShown: true, animation: "none", title: "Scan Produk" }}
+            />
+          </Stack>
         </View>
       </View>
     </PaperProvider>

@@ -3,9 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { ActivityIndicator, Button, DataTable, useTheme } from "react-native-paper";
 import { useProductListStore } from "../stores/productListStore";
 import { PencilSquareIcon, TrashIcon, PlusIcon } from "react-native-heroicons/outline";
+import { useRouter, usePathname } from "expo-router";
 
 const MenuPage = () => {
   const theme = useTheme();
+  const router = useRouter();
 
   const { products, loading, error, fetchAllProducts } = useProductListStore();
 
@@ -31,11 +33,11 @@ const MenuPage = () => {
           icon={() => <PlusIcon size={24} color={"#fff"} />}
           mode="contained"
           text="Tambah Menu"
-          onPress={() => console.log("Tambah Menu")}
           style={{
             backgroundColor: theme.colors.secondary,
             borderRadius: 12,
           }}
+          onPress={() => router.push("/menuForm")}
         >
           Tambah Menu
         </Button>
@@ -51,7 +53,7 @@ const MenuPage = () => {
         </DataTable.Header>
 
         {products.map((product) => (
-          <DataTable.Row>
+          <DataTable.Row key={product.id}>
             <DataTable.Cell>{product.name}</DataTable.Cell>
             <DataTable.Cell>{product.category}</DataTable.Cell>
             <DataTable.Cell>{product.description}</DataTable.Cell>

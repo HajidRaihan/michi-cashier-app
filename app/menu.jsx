@@ -52,8 +52,8 @@ const MenuPage = () => {
           <DataTable.Title>Action</DataTable.Title>
         </DataTable.Header>
 
-        {products.map((product) => (
-          <DataTable.Row key={product.id}>
+        {products.map((product, index) => (
+          <DataTable.Row key={product}>
             <DataTable.Cell>{product.name}</DataTable.Cell>
             <DataTable.Cell>{product.category}</DataTable.Cell>
             <DataTable.Cell>{product.description}</DataTable.Cell>

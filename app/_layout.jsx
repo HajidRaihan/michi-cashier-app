@@ -3,6 +3,9 @@ import { Stack } from "expo-router";
 import SideBar from "../components/SideBar";
 import { View, StyleSheet } from "react-native";
 import ScanPrintDialog from "../components/ScanPrintDialog";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+
+registerTranslation("en-GB", enGB);
 
 const theme = {
   ...MD3LightTheme,
@@ -30,7 +33,7 @@ export default function Layout() {
             <Stack.Screen name="menu" options={{ headerShown: false, animation: "none" }} />
             <Stack.Screen
               name="menuForm"
-              options={{ headerShown: true, animation: "none", title: "Scan Produk" }}
+              options={{ headerShown: true, animation: "none", title: "Tambah Produk" }}
             />
           </Stack>
         </View>

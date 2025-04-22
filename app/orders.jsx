@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataTable,
   Text,
@@ -7,22 +7,40 @@ import {
   ActivityIndicator,
   IconButton,
   Badge,
+  useTheme,
 } from "react-native-paper";
 import { useOrderListStore } from "../stores/orderStore";
 import { View, StyleSheet, ScrollView } from "react-native";
+import { Button } from "react-native-paper";
 import { format } from "date-fns";
+import { DatePickerInput } from "react-native-paper-dates";
 
 const Orders = () => {
+  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [numberOfItemsPerPageList] = useState([5, 10, 15]);
   const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
   const [expandedOrders, setExpandedOrders] = useState({});
 
-  const { fetcAllOrders, orders, loading, error } = useOrderListStore();
+  const [inputDate, setInputDate] = React.useState(undefined);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+
+  const { fetcAllOrders, orders, totalIncome, loading, error } = useOrderListStore();
 
   useEffect(() => {
     fetcAllOrders();
   }, []);
+
+  const filterHandler = () => {
+    fetcAllOrders(startDate, endDate);
+  };
+
+  const clearFilterHandler = () => {
+    setStartDate(null);
+    setEndDate(null);
+    fetcAllOrders();
+  };
 
   useEffect(() => {
     setPage(0);
@@ -38,14 +56,14 @@ const Orders = () => {
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, orders.length);
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Memuat data pesanan...</Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.centered}>
+  //       <ActivityIndicator size="large" />
+  //       <Text style={styles.loadingText}>Memuat data pesanan...</Text>
+  //     </View>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -72,8 +90,52 @@ const Orders = () => {
 
   return (
     <ScrollView style={styles.scrollContainer}>
+      <View style={styles.datePickerContainer}>
+        <DatePickerInput
+          locale="en"
+          mode="outlined"
+          label="Start Date"
+          value={startDate}
+          onChange={(d) => setStartDate(d)}
+          inputMode="start"
+        />
+        <DatePickerInput
+          style={styles.inputDate}
+          locale="en"
+          mode="outlined"
+          label="End Date"
+          value={endDate}
+          onChange={(d) => setEndDate(d)}
+          inputMode="start"
+        />
+        <Button
+          mode="outlined"
+          icon="magnify"
+          onPress={filterHandler}
+          style={{ backgroundColor: theme.colors.lightSecondary, borderRadius: 12 }}
+          labelStyle={{ color: theme.colors.secondary }}
+          textColor={theme.colors.secondary}
+        >
+          Cari
+        </Button>
+        <Button
+          mode="outlined"
+          icon="cancel"
+          style={{ backgroundColor: theme.colors.errorContainer, borderRadius: 12 }}
+          labelStyle={{ color: theme.colors.error }}
+          textColor={theme.colors.error}
+          onPress={clearFilterHandler}
+        >
+          Clear
+        </Button>
+      </View>
       <View style={styles.container}>
         <Text style={styles.title}>Daftar Pesanan</Text>
+
+        <View style={styles.totalIncomeContainer}>
+          <Text style={styles.totalIncomeLabel}>Total Pendapatan: </Text>
+          <Text style={styles.totalIncomeValue}>Rp. {totalIncome.toLocaleString("id-ID")}</Text>
+        </View>
 
         <DataTable>
           <DataTable.Header style={styles.tableHeader}>
@@ -84,13 +146,21 @@ const Orders = () => {
             <DataTable.Title>Detail</DataTable.Title>
           </DataTable.Header>
 
-          {orders.slice(from, to).map((order) => (
-            <View key={order.id}>
-              <DataTable.Row>
-                <DataTable.Cell>{order.order_number}</DataTable.Cell>
-                <DataTable.Cell>{format(new Date(order.created_at), "dd/MM HH:mm")}</DataTable.Cell>
-                <DataTable.Cell>Rp {order.total_price.toLocaleString()}</DataTable.Cell>
-                {/* <DataTable.Cell>
+          {loading ? (
+            <View style={styles.centered}>
+              <ActivityIndicator size="large" />
+              <Text style={styles.loadingText}>Memuat data pesanan...</Text>
+            </View>
+          ) : (
+            orders.slice(from, to).map((order) => (
+              <View key={order.id}>
+                <DataTable.Row>
+                  <DataTable.Cell>{order.order_number}</DataTable.Cell>
+                  <DataTable.Cell>
+                    {format(new Date(order.created_at), "dd/MM HH:mm")}
+                  </DataTable.Cell>
+                  <DataTable.Cell>Rp. {order.total_price.toLocaleString("id-ID")}</DataTable.Cell>
+                  {/* <DataTable.Cell>
                   <Chip
                     style={[styles.statusChip, { backgroundColor: getStatusColor(order.status) }]}
                     textStyle={{ color: "white", fontSize: 10 }}
@@ -98,61 +168,62 @@ const Orders = () => {
                     {order.status || "Baru"}
                   </Chip>
                 </DataTable.Cell> */}
-                <DataTable.Cell>
-                  <IconButton
-                    icon={expandedOrders[order.id] ? "chevron-up" : "chevron-down"}
-                    size={20}
-                    onPress={() => toggleOrderExpanded(order.id)}
-                  />
-                </DataTable.Cell>
-              </DataTable.Row>
+                  <DataTable.Cell>
+                    <IconButton
+                      icon={expandedOrders[order.id] ? "chevron-up" : "chevron-down"}
+                      size={20}
+                      onPress={() => toggleOrderExpanded(order.id)}
+                    />
+                  </DataTable.Cell>
+                </DataTable.Row>
 
-              {expandedOrders[order.id] && (
-                <Card style={styles.detailCard}>
-                  <Card.Content>
-                    <View style={styles.detailHeader}>
-                      <Text style={styles.detailTitle}>Detail Pesanan</Text>
-                      <Badge style={styles.itemCountBadge}>{order.order_items.length}</Badge>
-                    </View>
+                {expandedOrders[order.id] && (
+                  <Card style={styles.detailCard}>
+                    <Card.Content>
+                      <View style={styles.detailHeader}>
+                        <Text style={styles.detailTitle}>Detail Pesanan</Text>
+                        <Badge style={styles.itemCountBadge}>{order.order_items.length}</Badge>
+                      </View>
 
-                    <ScrollView style={styles.itemsScrollView} nestedScrollEnabled={true}>
-                      {order.order_items.map((item) => (
-                        <View key={item.id} style={styles.itemContainer}>
-                          <View style={styles.itemHeader}>
-                            <Text style={styles.itemName}>{item.product_name}</Text>
-                            <Text style={styles.itemQuantity}>x{item.quantity}</Text>
-                          </View>
+                      <ScrollView style={styles.itemsScrollView} nestedScrollEnabled={true}>
+                        {order.order_items.map((item) => (
+                          <View key={item.id} style={styles.itemContainer}>
+                            <View style={styles.itemHeader}>
+                              <Text style={styles.itemName}>{item.product_name}</Text>
+                              <Text style={styles.itemQuantity}>x{item.quantity}</Text>
+                            </View>
 
-                          <View style={styles.itemDetails}>
-                            <Text style={styles.itemVariant}>
-                              {item.variant_type}: {item.variant_name}
-                              {item.variant_price > 0 && ` (+${item.variant_price})`}
+                            <View style={styles.itemDetails}>
+                              <Text style={styles.itemVariant}>
+                                {item.variant_type}: {item.variant_name}
+                                {item.variant_price > 0 && ` (+${item.variant_price})`}
+                              </Text>
+                              {item.note && <Text style={styles.itemNote}>Note: {item.note}</Text>}
+                            </View>
+
+                            <Text style={styles.itemTotalPrice}>
+                              Rp {item.total_price.toLocaleString()}
                             </Text>
-                            {item.note && <Text style={styles.itemNote}>Note: {item.note}</Text>}
+
+                            <View style={styles.divider} />
                           </View>
+                        ))}
+                      </ScrollView>
 
-                          <Text style={styles.itemTotalPrice}>
-                            Rp {item.total_price.toLocaleString()}
-                          </Text>
-
-                          <View style={styles.divider} />
-                        </View>
-                      ))}
-                    </ScrollView>
-
-                    <View style={styles.orderSummary}>
-                      <Text style={styles.paymentMethod}>
-                        Pembayaran: {order.payment_type.toUpperCase()}
-                      </Text>
-                      <Text style={styles.orderTotalPrice}>
-                        Rp {order.total_price.toLocaleString()}
-                      </Text>
-                    </View>
-                  </Card.Content>
-                </Card>
-              )}
-            </View>
-          ))}
+                      <View style={styles.orderSummary}>
+                        <Text style={styles.paymentMethod}>
+                          Pembayaran: {order.payment_type.toUpperCase()}
+                        </Text>
+                        <Text style={styles.orderTotalPrice}>
+                          Rp {order.total_price.toLocaleString()}
+                        </Text>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                )}
+              </View>
+            ))
+          )}
 
           <DataTable.Pagination
             page={page}
@@ -180,6 +251,38 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     margin: 12,
+  },
+  datePickerContainer: {
+    justifyContent: "center",
+    flex: 1,
+    gap: 10,
+    padding: 10,
+    margin: 12,
+    marginBottom: 0,
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    flexDirection: "row",
+  },
+  totalIncomeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  totalIncomeLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 8,
+  },
+  totalIncomeValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
   },
   title: {
     fontSize: 20,

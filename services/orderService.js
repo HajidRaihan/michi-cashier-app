@@ -15,14 +15,31 @@ export const getOrderItems = async () => {
   return data;
 };
 
-export const getOrders = async () => {
-  const { data, error } = await supabase.from("orders").select(`
-      *,
-      order_items(*)
-    `);
+export const getOrders = async (startDate, endDate) => {
+  let query = supabase.from("orders").select(`
+    *, 
+    order_items(*)
+  `);
+
+  // Tambahkan filter rentang tanggal jika tersedia
+  if (startDate && endDate) {
+    query = query.gte("created_at", startDate).lte("created_at", endDate);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
-  return data;
+
+  // Hitung total pendapatan dari order_items
+  const totalIncome = data?.reduce((acc, order) => {
+    const orderTotal = order.order_items?.reduce((sum, item) => sum + (item.total_price || 0), 0);
+    return acc + orderTotal;
+  }, 0);
+
+  return {
+    orders: data,
+    totalIncome,
+  };
 };
 
 export const createOrder = async (orders, totalOrderPrice) => {

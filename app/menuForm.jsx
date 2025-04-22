@@ -121,7 +121,7 @@ const MenuForm = () => {
           value={selectedVariant}
         >
           {variants.map((variant) => (
-            <RadioButton.Item label={variant.name} value={variant.id} />
+            <RadioButton.Item key={variant.id} label={variant.name} value={variant.id} />
           ))}
         </RadioButton.Group>
       </View>

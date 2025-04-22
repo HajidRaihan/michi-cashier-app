@@ -124,21 +124,23 @@ export const useOrderStore = create((set) => ({
 
 export const useOrderListStore = create((set) => ({
   orders: [],
+  totalIncome: 0,
   loading: false,
   error: null,
 
-  fetcAllOrders: async () => {
+  fetcAllOrders: async (startDate, endDate) => {
     set({ loading: true, error: null });
 
     try {
-      const orders = await getOrders();
+      const res = await getOrders(startDate, endDate);
 
-      console.log("orders", orders);
-      console.log(JSON.stringify(orders, null, 2));
+      console.log("res", res.orders);
+      console.log(JSON.stringify(res.orders, null, 2));
 
       set({
-        orders: orders,
+        orders: res.orders,
         loading: false,
+        totalIncome: res.totalIncome,
       });
     } catch (error) {
       console.error("Error fetching product list:", error);

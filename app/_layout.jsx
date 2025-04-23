@@ -35,6 +35,7 @@ export default function Layout() {
               name="menuForm"
               options={{ headerShown: true, animation: "none", title: "Tambah Produk" }}
             />
+            <Stack.Screen name="expenses" options={{ headerShown: false, animation: "none" }} />
           </Stack>
         </View>
       </View>

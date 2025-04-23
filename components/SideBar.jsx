@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { HomeIcon, ListBulletIcon, NewspaperIcon } from "react-native-heroicons/outline";
+import {
+  HomeIcon,
+  ListBulletIcon,
+  NewspaperIcon,
+  DocumentIcon,
+} from "react-native-heroicons/outline";
 import { useTheme } from "react-native-paper";
 import { useRouter, usePathname } from "expo-router";
 
@@ -25,6 +30,11 @@ const SideBar = () => {
       name: "Menu",
       route: "/menu",
       icon: ListBulletIcon,
+    },
+    {
+      name: "Expenses",
+      route: "/expenses",
+      icon: DocumentIcon,
     },
   ];
 

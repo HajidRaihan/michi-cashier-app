@@ -8,6 +8,7 @@ import { useExpenseStore } from "../stores/expenseStore";
 import { useErrorToast, useSuccessToast } from "../hook/useToast";
 import { deleteExpense } from "../services/expenseService";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { login, signUp } from "../services/userService";
 
 const Expenses = () => {
   const theme = useTheme();
@@ -20,6 +21,12 @@ const Expenses = () => {
   useEffect(() => {
     fetchAllExpenses();
   }, []);
+
+  const loginHandler = async () => {
+    console.log("masuk");
+    const { res, error } = await signUp("John Doe", "9Wk6b@gmail.com", "password123");
+    console.log(res);
+  };
 
   if (error) {
     useErrorToast("Terjadi kesalahan");
@@ -69,7 +76,7 @@ const Expenses = () => {
                 backgroundColor: theme.colors.secondary,
                 borderRadius: 12,
               }}
-              onPress={() => setOpenDialog(true)}
+              onPress={loginHandler}
             >
               Tambah Pengeluaran
             </Button>

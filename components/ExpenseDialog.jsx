@@ -2,14 +2,45 @@ import { useState } from "react";
 import { Text, View, Modal, StyleSheet, ScrollView } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
+import { createExpenses } from "../services/expenseService";
+import { generateTimeBasedId } from "../lib/generateId";
+import Toast from "react-native-toast-message";
+import { useErrorToast, useSuccessToast } from "../hook/useToast";
 
-const ExpensesDialog = ({ onDismiss }) => {
+const ExpenseDialog = ({ onDismiss, visible }) => {
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState();
 
+  const createExpensesHandler = async () => {
+    const data = {
+      id: generateTimeBasedId(),
+      amount,
+      description,
+      expense_date: date,
+    };
+    console.log("ini ada", data);
+    const res = await createExpenses(data);
+
+    onDismiss();
+    if (res.error) {
+      return useErrorToast("Gagal menambahkan pengeluaran");
+    }
+    console.log(res);
+    useSuccessToast("Berhasil menambahkan pengeluaran");
+  };
+
+  const showToast = () => {
+    Toast.show({
+      type: "error", // success | error | info
+      text1: "Berhasil",
+      text2: "Pengeluaran berhasil ditambahkan 👋",
+      position: "bottom", // atau 'bottom'
+    });
+  };
+
   return (
-    <Modal animationType="fade" transparent={true} visible={true}>
+    <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={styles.overlay}>
         <View style={styles.modalView}>
           <ScrollView>
@@ -42,11 +73,7 @@ const ExpensesDialog = ({ onDismiss }) => {
               <Button mode="outlined" onPress={onDismiss} style={styles.button}>
                 Batal
               </Button>
-              <Button
-                mode="contained"
-                // onPress={handleAddToCart}
-                style={styles.button}
-              >
+              <Button mode="contained" onPress={createExpensesHandler} style={styles.button}>
                 Tambah
               </Button>
             </View>
@@ -102,4 +129,5 @@ const styles = StyleSheet.create({
     width: 120,
   },
 });
-export default ExpensesDialog;
+
+export default ExpenseDialog;

@@ -1,15 +1,18 @@
 import { supabase } from "../lib/supabase";
 
-const getAllExpenses = async () => {
+export const getAllExpenses = async () => {
   try {
-    const res = await supabase.from("expenses").select("*");
-    return res;
+    const { data, error } = await supabase.from("expenses").select("*");
+    if (error) throw error;
+    return data;
   } catch (error) {
     throw error;
   }
 };
 
-const createExpenses = async (expense) => {
+export const createExpenses = async (expense) => {
+  console.log({ expense });
+  console.log("oioio");
   try {
     const res = await supabase.from("expenses").insert([expense]);
     return res;
@@ -18,4 +21,13 @@ const createExpenses = async (expense) => {
   }
 };
 
-export { getAllExpenses, createExpenses };
+export const deleteExpense = async (id) => {
+  try {
+    const res = await supabase.from("expenses").delete().eq("id", id);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// export { getAllExpenses, createExpenses };

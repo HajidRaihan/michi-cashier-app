@@ -23,7 +23,8 @@ const OrderCard = ({ item }) => {
         {item.variant_type_name && (
           <Text style={{ fontSize: 12 }}>
             {item.variant_type_name} : {item.variant_value}{" "}
-            {item.variant_extra_price > 0 && `(+Rp. ${item.variant_extra_price?.toLocaleString()})`}
+            {item.variant_extra_price > 0 &&
+              `(+Rp. ${item.variant_extra_price?.toLocaleString("id-ID")})`}
           </Text>
         )}
         <Text style={{ fontSize: 12 }}>catatan : {item.note}</Text>

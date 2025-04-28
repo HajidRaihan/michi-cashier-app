@@ -202,7 +202,7 @@ const Orders = () => {
                             </View>
 
                             <Text style={styles.itemTotalPrice}>
-                              Rp {item.total_price.toLocaleString()}
+                              Rp {item.total_price.toLocaleString("id-ID")}
                             </Text>
 
                             <View style={styles.divider} />
@@ -215,7 +215,7 @@ const Orders = () => {
                           Pembayaran: {order.payment_type.toUpperCase()}
                         </Text>
                         <Text style={styles.orderTotalPrice}>
-                          Rp {order.total_price.toLocaleString()}
+                          Rp {order.total_price.toLocaleString("id-ID")}
                         </Text>
                       </View>
                     </Card.Content>

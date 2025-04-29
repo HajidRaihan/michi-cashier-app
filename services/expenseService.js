@@ -1,10 +1,26 @@
 import { supabase } from "../lib/supabase";
 
-export const getAllExpenses = async () => {
+export const getAllExpenses = async (startDate, endDate) => {
   try {
-    const { data, error } = await supabase.from("expenses").select("*");
+    let query = supabase.from("expenses").select("*");
+
+    if (startDate && endDate) {
+      query = query.gte("expense_date", startDate).lte("expense_date", endDate);
+    }
+
+    // Pastikan pengurutan dengan eksplisit mendeklarasikan columnnya
+    const { data, error } = await query.order("expense_date", { ascending: false });
+
     if (error) throw error;
-    return data;
+
+    const totalExpense = data.reduce((acc, expense) => {
+      return acc + expense.amount;
+    }, 0);
+
+    return {
+      expenses: data,
+      totalExpense,
+    };
   } catch (error) {
     throw error;
   }

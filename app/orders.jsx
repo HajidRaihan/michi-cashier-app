@@ -22,7 +22,6 @@ const Orders = () => {
   const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
   const [expandedOrders, setExpandedOrders] = useState({});
 
-  const [inputDate, setInputDate] = React.useState(undefined);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
 
@@ -33,7 +32,10 @@ const Orders = () => {
   }, []);
 
   const filterHandler = () => {
-    fetcAllOrders(startDate, endDate);
+    const isoStartDate = startDate ? new Date(startDate).toISOString() : undefined;
+    const isoEndDate = endDate ? new Date(endDate).toISOString() : undefined;
+
+    fetcAllOrders(isoStartDate, isoEndDate);
   };
 
   const clearFilterHandler = () => {
@@ -157,7 +159,7 @@ const Orders = () => {
                 <DataTable.Row>
                   <DataTable.Cell>{order.order_number}</DataTable.Cell>
                   <DataTable.Cell>
-                    {format(new Date(order.created_at), "dd/MM HH:mm")}
+                    {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
                   </DataTable.Cell>
                   <DataTable.Cell>Rp. {order.total_price.toLocaleString("id-ID")}</DataTable.Cell>
                   {/* <DataTable.Cell>

@@ -1,36 +1,56 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ToastAndroid } from "react-native";
 import { ActivityIndicator, Button, DataTable, useTheme } from "react-native-paper";
+import { DatePickerInput } from "react-native-paper-dates";
+
 import { PlusIcon, TrashIcon } from "react-native-heroicons/outline";
 import Toast from "react-native-toast-message";
 import ExpenseDialog from "../components/ExpenseDialog";
 import { useExpenseStore } from "../stores/expenseStore";
-import { useErrorToast, useSuccessToast } from "../hook/useToast";
+import { useToastHandler } from "../hook/useToastHandler";
 import { deleteExpense } from "../services/expenseService";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { login, signUp } from "../services/userService";
 
 const Expenses = () => {
   const theme = useTheme();
-  const { expenses, fetchAllExpenses, loading, error } = useExpenseStore();
+  const [page, setPage] = useState(0);
+  const [numberOfItemsPerPageList] = useState([5, 10, 15]);
+  const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+
+  const { expenses, totalExpense, fetchAllExpenses, loading, error } = useExpenseStore();
   const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [expenseId, setExpenseId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const { showToast } = useToastHandler();
+
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, expenses.length);
 
   useEffect(() => {
     fetchAllExpenses();
   }, []);
 
-  const loginHandler = async () => {
-    console.log("masuk");
-    const { res, error } = await signUp("John Doe", "9Wk6b@gmail.com", "password123");
-    console.log(res);
+  const filterHandler = () => {
+    const isoStartDate = startDate ? new Date(startDate).toISOString() : undefined;
+    const isoEndDate = endDate ? new Date(endDate).toISOString() : undefined;
+
+    fetchAllExpenses(isoStartDate, isoEndDate);
   };
 
-  if (error) {
-    useErrorToast("Terjadi kesalahan");
-  }
+  const clearFilterHandler = () => {
+    setStartDate(null);
+    setEndDate(null);
+    fetchAllExpenses();
+  };
+
+  useEffect(() => {
+    if (error) {
+      showToast("error", "Terjadi kesalahan");
+    }
+  }, [error, showToast]);
 
   const deleteHandler = async () => {
     try {
@@ -38,7 +58,7 @@ const Expenses = () => {
       const res = await deleteExpense(expenseId);
       fetchAllExpenses();
       setOpenConfirmDialog(false);
-      useSuccessToast("Berhasil menghapus pengeluaran");
+      showToast("success", "Berhasil menghapus pengeluaran");
       setDeleteLoading(false);
       console.log(res);
     } catch (err) {
@@ -55,6 +75,45 @@ const Expenses = () => {
   return (
     <>
       <ScrollView>
+        <View style={styles.datePickerContainer}>
+          <DatePickerInput
+            locale="en"
+            mode="outlined"
+            label="Start Date"
+            value={startDate}
+            onChange={(d) => setStartDate(d)}
+            inputMode="start"
+          />
+          <DatePickerInput
+            style={styles.inputDate}
+            locale="en"
+            mode="outlined"
+            label="End Date"
+            value={endDate}
+            onChange={(d) => setEndDate(d)}
+            inputMode="start"
+          />
+          <Button
+            mode="outlined"
+            icon="magnify"
+            onPress={filterHandler}
+            style={{ backgroundColor: theme.colors.lightSecondary, borderRadius: 12 }}
+            labelStyle={{ color: theme.colors.secondary }}
+            textColor={theme.colors.secondary}
+          >
+            Cari
+          </Button>
+          <Button
+            mode="outlined"
+            icon="cancel"
+            style={{ backgroundColor: theme.colors.errorContainer, borderRadius: 12 }}
+            labelStyle={{ color: theme.colors.error }}
+            textColor={theme.colors.error}
+            onPress={clearFilterHandler}
+          >
+            Clear
+          </Button>
+        </View>
         <ConfirmDialog
           title="Apakah kamu ingin menghapus pengeluaran ini?"
           action="Hapus"
@@ -67,7 +126,10 @@ const Expenses = () => {
           <Toast />
           <ExpenseDialog onDismiss={() => setOpenDialog(false)} visible={openDialog} />
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Daftar Pengeluaran</Text>
+            <View>
+              <Text style={styles.title}>Daftar Pengeluaran</Text>
+              <Text style={{ fontWeight: "bold" }}>Rp. {totalExpense.toLocaleString("id-ID")}</Text>
+            </View>
             <Button
               icon={() => <PlusIcon size={24} color={"#fff"} />}
               mode="contained"
@@ -76,11 +138,16 @@ const Expenses = () => {
                 backgroundColor: theme.colors.secondary,
                 borderRadius: 12,
               }}
-              onPress={loginHandler}
+              onPress={() => setOpenDialog(true)}
             >
               Tambah Pengeluaran
             </Button>
           </View>
+          {/* <Text>
+            Total Pengeluaran:{" "}
+            <Text style={{ fontWeight: "bold" }}>Rp. {totalExpense.toLocaleString("id-ID")}</Text>
+          </Text> */}
+
           <DataTable>
             <DataTable.Header style={styles.tableHeader}>
               <DataTable.Title style={{ flex: 3 }}>Deskripsi</DataTable.Title>
@@ -94,7 +161,7 @@ const Expenses = () => {
                 <ActivityIndicator size="large" />
               </View>
             ) : (
-              expenses?.map((expense) => (
+              expenses.slice(from, to).map((expense) => (
                 <DataTable.Row key={expense.id}>
                   <DataTable.Cell style={{ flex: 3 }}>
                     <Text numberOfLines={0} style={{ flexShrink: 1, marginRight: 8 }}>
@@ -123,6 +190,18 @@ const Expenses = () => {
                 </DataTable.Row>
               ))
             )}
+
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.ceil(expenses.length / itemsPerPage)}
+              onPageChange={(page) => setPage(page)}
+              label={`${from + 1}-${to} dari ${expenses.length}`}
+              numberOfItemsPerPageList={numberOfItemsPerPageList}
+              numberOfItemsPerPage={itemsPerPage}
+              onItemsPerPageChange={onItemsPerPageChange}
+              showFastPaginationControls
+              selectPageDropdownLabel={"Baris per halaman"}
+            />
           </DataTable>
         </View>
       </ScrollView>
@@ -147,7 +226,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 12,
+    // marginBottom: 12,
   },
   tableHeader: {
     backgroundColor: "#f5f5f5",
@@ -161,6 +240,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+  },
+  datePickerContainer: {
+    justifyContent: "center",
+    flex: 1,
+    gap: 10,
+    padding: 10,
+    margin: 12,
+    marginBottom: 0,
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    flexDirection: "row",
   },
 });
 

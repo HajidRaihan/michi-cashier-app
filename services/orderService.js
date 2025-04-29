@@ -26,7 +26,7 @@ export const getOrders = async (startDate, endDate) => {
     query = query.gte("created_at", startDate).lte("created_at", endDate);
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.order("created_at", { ascending: false });
 
   if (error) throw error;
 

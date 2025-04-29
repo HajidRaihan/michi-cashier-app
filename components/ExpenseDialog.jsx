@@ -5,7 +5,7 @@ import { DatePickerInput } from "react-native-paper-dates";
 import { createExpenses } from "../services/expenseService";
 import { generateTimeBasedId } from "../lib/generateId";
 import Toast from "react-native-toast-message";
-import { useErrorToast, useSuccessToast } from "../hook/useToast";
+import { useErrorToast, useSuccessToast } from "../hook/useToastHandler";
 
 const ExpenseDialog = ({ onDismiss, visible }) => {
   const [amount, setAmount] = useState(0);

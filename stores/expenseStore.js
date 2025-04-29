@@ -3,16 +3,17 @@ import { getAllExpenses } from "../services/expenseService";
 
 const useExpenseStore = create((set) => ({
   expenses: [],
+  totalExpense: 0,
   loading: false,
   error: null,
 
-  fetchAllExpenses: async () => {
+  fetchAllExpenses: async (startDate, endDate) => {
     set({ loading: true, error: null });
     try {
-      const res = await getAllExpenses();
-      console.log(res);
+      const { expenses, totalExpense } = await getAllExpenses(startDate, endDate);
       set({
-        expenses: res,
+        expenses: expenses,
+        totalExpense: totalExpense,
         loading: false,
       });
     } catch (error) {

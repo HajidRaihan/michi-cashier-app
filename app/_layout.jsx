@@ -3,9 +3,9 @@ import { Stack } from "expo-router";
 import SideBar from "../components/SideBar";
 import { View, StyleSheet } from "react-native";
 import ScanPrintDialog from "../components/ScanPrintDialog";
-import { enGB, registerTranslation } from "react-native-paper-dates";
+import { en, registerTranslation } from "react-native-paper-dates";
 
-registerTranslation("en-GB", enGB);
+registerTranslation("en", en); // Register the 'en' locale
 
 const theme = {
   ...MD3LightTheme,

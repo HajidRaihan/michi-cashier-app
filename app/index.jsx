@@ -8,18 +8,28 @@ import { useEffect, useState } from "react";
 import ProductDialog from "../components/ProductDialog";
 import PrintDialog from "../components/ScanPrintDialog";
 import { useProductListStore } from "../stores/productListStore";
+import { ActivityIndicator } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
-  const category = ["Chicken Crispy", "Chicken Pop", "Chicken Katsu", "Mie Cian", "Drink", "Addon"];
-  const [activeCategory, setActiveCategory] = useState("Makanan");
-  const [product, setProduct] = useState();
-  const [orderProduk, setOrderProduk] = useState([]);
+  const category = [
+    "All",
+    "Chicken Crispy",
+    "Chicken Pop",
+    "Chicken Katsu",
+    "Mie Cian",
+    "Drink",
+    "Addon",
+  ];
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [filteredProduct, setFilteredProduct] = useState();
+
   // const [category, setCategory] = useState("makanan");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState("");
 
-  const { products, fetchAllProducts } = useProductListStore();
+  const { products, fetchAllProducts, loading } = useProductListStore();
 
   const handleProductClick = (product) => {
     setOpenDialog(true);
@@ -31,26 +41,36 @@ export default function Home() {
     fetchAllProducts();
   }, []);
 
+  // i want to filter the product base on category
+  useEffect(() => {
+    if (activeCategory === "All") {
+      setFilteredProduct(products);
+      return;
+    }
+    setFilteredProduct(products.filter((product) => product.category === activeCategory));
+  }, [activeCategory, products]);
+
   return (
-    <MainLayout>
-      {/* Optional wrapper */}
-      <ProductDialog
-        visible={openDialog}
-        onDismiss={() => setOpenDialog(false)}
-        product={selectedProduct}
-      />
-      <View style={styles.menuContainer}>
-        <ScrollView style={styles.menuScroll}>
-          <View style={styles.categoryWrapper}>
-            {category?.map((item) => (
-              <CardCategory
-                key={item}
-                title={item}
-                isActive={activeCategory === item}
-                onPress={() => setActiveCategory(item)}
-              />
-            ))}
-            {/* <CardCategory
+    <>
+      <MainLayout>
+        {/* Optional wrapper */}
+        <ProductDialog
+          visible={openDialog}
+          onDismiss={() => setOpenDialog(false)}
+          product={selectedProduct}
+        />
+        <View style={styles.menuContainer}>
+          <ScrollView style={styles.menuScroll}>
+            <View style={styles.categoryWrapper}>
+              {category?.map((item) => (
+                <CardCategory
+                  key={item}
+                  title={item}
+                  isActive={activeCategory === item}
+                  onPress={() => setActiveCategory(item)}
+                />
+              ))}
+              {/* <CardCategory
               title="Makanan"
               icon={faBowlFood}
               isActive={activeCategory === "Makanan"}
@@ -62,19 +82,26 @@ export default function Home() {
               isActive={activeCategory === "Minuman"}
               onPress={() => setActiveCategory("Minuman")}
             /> */}
-          </View>
+            </View>
 
-          <Text style={styles.menuTitle}>Menu {activeCategory.toLowerCase()}</Text>
+            {/* <Text style={styles.menuTitle}>Menu {activeCategory.toLowerCase()}</Text> */}
 
-          <View style={styles.menuGrid}>
-            {products?.map((item) => (
-              <MenuCard key={item.id} product={item} handleProductClick={handleProductClick} />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-      <OrderList product={product?.filter((p) => p.quantity > 0)} />
-    </MainLayout>
+            <View style={styles.menuGrid}>
+              {!loading ? (
+                filteredProduct?.map((item) => (
+                  <MenuCard key={item.id} product={item} handleProductClick={handleProductClick} />
+                ))
+              ) : (
+                <View style={styles.centered}>
+                  <ActivityIndicator size="large" />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        </View>
+        <OrderList />
+      </MainLayout>
+    </>
   );
 }
 
@@ -90,6 +117,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     marginVertical: 10,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
   menuGrid: {
     flexDirection: "row",

@@ -214,7 +214,7 @@ const Orders = () => {
 
                       <View style={styles.orderSummary}>
                         <Text style={styles.paymentMethod}>
-                          Pembayaran: {order.payment_type.toUpperCase()}
+                          Pembayaran: {order.payment_type?.toUpperCase()}
                         </Text>
                         <Text style={styles.orderTotalPrice}>
                           Rp {order.total_price.toLocaleString("id-ID")}

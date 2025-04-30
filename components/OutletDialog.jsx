@@ -1,5 +1,4 @@
-import { set } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View, ScrollView } from "react-native";
 import { RadioButton, TextInput, Button } from "react-native-paper";
 import { useKasirStore } from "../stores/kasirStore";
@@ -10,27 +9,18 @@ const outletList = [
   { label: "Outlet 3", value: "Outlet 3" },
 ];
 
-const PrintDialog = ({
-  visible,
-  onDismiss,
-  handlePrint,
-  totalOrderPrice,
-  paymentList,
-  paymentType,
-  setPaymentType,
-}) => {
-  const [cash, setCash] = useState(0);
-  const [kembalian, setKembalian] = useState(0);
-
+const OutletDialog = ({ visible, onDismiss }) => {
   const { kasir, setKasir, outlet, setOutlet } = useKasirStore();
 
-  useEffect(() => {
-    setKembalian(cash - totalOrderPrice);
-  }, [cash, totalOrderPrice]);
+  const saveData = () => {
+    setKasir(kasir);
+    setOutlet(outlet);
+    onDismiss();
+  };
 
-  const handlePrintAndDismiss = async () => {
-    await handlePrint();
-    setCash(0);
+  const cancelData = () => {
+    setKasir("");
+    setOutlet("");
     onDismiss();
   };
 
@@ -40,33 +30,7 @@ const PrintDialog = ({
         <View style={styles.modalView}>
           <ScrollView>
             <View style={{ width: "100%" }} contentContainerStyle={{ padding: 20 }}>
-              <Text style={styles.title}>Cetak</Text>
-
-              <Text style={styles.harga}>
-                Total Harga: Rp. {totalOrderPrice?.toLocaleString("id-ID")}
-              </Text>
-
-              <View style={{ marginBottom: 16 }}>
-                <Text style={styles.label}>Pilih Pembayaran:</Text>
-                <RadioButton.Group
-                  onValueChange={(value) => setPaymentType(value)}
-                  value={paymentType}
-                >
-                  {paymentList.map((item) => (
-                    <RadioButton.Item key={item.value} label={item.label} value={item.value} />
-                  ))}
-                </RadioButton.Group>
-              </View>
-
-              {/* JUMLAH */}
-              <TextInput
-                label="Jumlah Uang"
-                keyboardType="numeric"
-                mode="outlined"
-                value={cash}
-                onChangeText={(text) => setCash(text)}
-                style={styles.input}
-              />
+              <Text style={styles.title}>Masukkan data kasir</Text>
               <TextInput
                 label="Nama Kasir"
                 mode="outlined"
@@ -84,19 +48,10 @@ const PrintDialog = ({
                 </RadioButton.Group>
               </View>
 
-              <Text style={styles.harga}>Kembalian : Rp. {kembalian?.toLocaleString("id-ID")}</Text>
-
-              {/* CATATAN */}
-              {/* <TextInput label="Catatan" mode="outlined" style={styles.input} /> */}
-              {/* 
-            <Text style={styles.total}>
-              Total Harga: Rp. {calculateTotalPrice().toLocaleString("id-ID")}
-            </Text> */}
-
               <View style={styles.actions}>
                 <Button
                   mode="outlined"
-                  onPress={onDismiss}
+                  onPress={cancelData}
                   style={{ marginRight: 8, width: "48%", borderRadius: 12 }}
                 >
                   Batal
@@ -104,9 +59,9 @@ const PrintDialog = ({
                 <Button
                   mode="contained"
                   style={{ width: "48%", borderRadius: 12 }}
-                  onPress={handlePrintAndDismiss}
+                  onPress={saveData}
                 >
-                  Cetak
+                  Simpan
                 </Button>
               </View>
             </View>
@@ -123,10 +78,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  harga: {
-    fontWeight: "bold",
-    marginVertical: 8,
   },
   modalView: {
     backgroundColor: "white",
@@ -154,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PrintDialog;
+export default OutletDialog;

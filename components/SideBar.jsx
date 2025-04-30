@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import {
   HomeIcon,
   ListBulletIcon,
   NewspaperIcon,
   DocumentIcon,
+  ChartPieIcon,
 } from "react-native-heroicons/outline";
 import { useTheme } from "react-native-paper";
 import { useRouter, usePathname } from "expo-router";
@@ -36,6 +37,11 @@ const SideBar = () => {
       route: "/expenses",
       icon: DocumentIcon,
     },
+    {
+      name: "Dashboard",
+      route: "/dashboard",
+      icon: ChartPieIcon,
+    },
   ];
 
   useEffect(() => {
@@ -46,31 +52,33 @@ const SideBar = () => {
   return (
     <View style={styles.sidebarContainer}>
       <View style={styles.sidebar}>
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = active === item.name;
-          return (
-            <TouchableOpacity
-              key={item.name}
-              style={[
-                styles.iconContainer,
-                isActive && { backgroundColor: theme.colors.lightSecondary },
-              ]}
-              onPress={() => router.push(item.route)}
-            >
-              <Icon size={24} color={isActive ? theme.colors.secondary : theme.colors.gray} />
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: isActive ? theme.colors.secondary : theme.colors.gray,
-                  fontWeight: isActive ? "bold" : "normal",
-                }}
+        <ScrollView>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = active === item.name;
+            return (
+              <TouchableOpacity
+                key={item.name}
+                style={[
+                  styles.iconContainer,
+                  isActive && { backgroundColor: theme.colors.lightSecondary },
+                ]}
+                onPress={() => router.push(item.route)}
               >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Icon size={24} color={isActive ? theme.colors.secondary : theme.colors.gray} />
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: isActive ? theme.colors.secondary : theme.colors.gray,
+                    fontWeight: isActive ? "bold" : "normal",
+                  }}
+                >
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
     </View>
   );

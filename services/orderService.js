@@ -42,7 +42,7 @@ export const getOrders = async (startDate, endDate) => {
   };
 };
 
-export const createOrder = async (orders, totalOrderPrice) => {
+export const createOrder = async ({ orders, totalOrderPrice, outlet, kasir, payment_type }) => {
   // const { orders, totalOrderPrice } = useOrderStore.getState();
 
   if (orders.length === 0) {
@@ -56,9 +56,11 @@ export const createOrder = async (orders, totalOrderPrice) => {
     id: generateTimeBasedId(),
     order_number: orderNumber,
     total_price: totalOrderPrice,
-    payment_type: "cash",
+    payment_type: payment_type,
     notes: "",
     status: "",
+    kasir: kasir,
+    outlet: outlet,
   };
 
   try {

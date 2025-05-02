@@ -117,7 +117,10 @@ export const fetchProducts = async () => {
 export const fetchProductsWithVariants = async () => {
   try {
     // Mengambil produk beserta tipe dan pilihan variannya
-    const { data: products, error } = await supabase.from("products").select(`
+    const { data: products, error } = await supabase
+      .from("products")
+      .select(
+        `
         *,
         product_variant_types (
           id,
@@ -130,7 +133,9 @@ export const fetchProductsWithVariants = async () => {
             )
           )
         )
-      `);
+      `
+      )
+      .eq("is_active", true);
 
     if (error) throw error;
 
@@ -190,6 +195,21 @@ export const createProduct = async (product, variant_id) => {
     return data;
   } catch (err) {
     console.error("Error creating product:", err);
+    throw err;
+  }
+};
+
+export const deleteProduct = async (id) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .update({ is_active: false })
+      .eq("id", id);
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("Error deleting product:", err);
     throw err;
   }
 };

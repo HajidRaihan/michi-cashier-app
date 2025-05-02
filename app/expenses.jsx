@@ -123,7 +123,6 @@ const Expenses = () => {
           onDismiss={() => setOpenConfirmDialog(false)}
         />
         <View style={styles.container}>
-          <Toast />
           <ExpenseDialog onDismiss={() => setOpenDialog(false)} visible={openDialog} />
           <View style={styles.titleContainer}>
             <View>

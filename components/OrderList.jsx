@@ -105,7 +105,7 @@ const OrderList = () => {
           loading={loading}
           handler={handleOrder}
         />
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order Details</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Detail Pesanan</Text>
         <ScrollView style={styles.orderListContainer}>
           {orders.length > 0 && orders?.map((item, index) => <OrderCard key={index} item={item} />)}
         </ScrollView>

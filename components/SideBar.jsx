@@ -23,7 +23,7 @@ const SideBar = () => {
       icon: HomeIcon,
     },
     {
-      name: "Orders",
+      name: "Pesanan",
       route: "/orders",
       icon: NewspaperIcon,
     },
@@ -33,7 +33,7 @@ const SideBar = () => {
       icon: ListBulletIcon,
     },
     {
-      name: "Expenses",
+      name: "Pengeluaran",
       route: "/expenses",
       icon: DocumentIcon,
     },
@@ -68,7 +68,7 @@ const SideBar = () => {
                 <Icon size={24} color={isActive ? theme.colors.secondary : theme.colors.gray} />
                 <Text
                   style={{
-                    fontSize: 12,
+                    fontSize: 10,
                     color: isActive ? theme.colors.secondary : theme.colors.gray,
                     fontWeight: isActive ? "bold" : "normal",
                   }}

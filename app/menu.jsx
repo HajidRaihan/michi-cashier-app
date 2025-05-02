@@ -1,13 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { ActivityIndicator, Button, DataTable, useTheme } from "react-native-paper";
 import { useProductListStore } from "../stores/productListStore";
-import { PencilSquareIcon, TrashIcon, PlusIcon } from "react-native-heroicons/outline";
+import { TrashIcon, PlusIcon } from "react-native-heroicons/outline";
 import { useRouter, usePathname } from "expo-router";
+import { deleteProduct } from "../services/productService";
+import ConfirmDialog from "../components/ConfirmDialog";
+import Toast from "react-native-toast-message";
+import { useToastHandler } from "../hook/useToastHandler";
 
 const MenuPage = () => {
   const theme = useTheme();
   const router = useRouter();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const { showToast } = useToastHandler();
+
+  const deleteHandler = async () => {
+    try {
+      setDeleteLoading(true);
+      await deleteProduct(selectedId);
+      showToast("success", "Berhasil menghapus produk");
+      setShowConfirmDialog(false);
+      setDeleteLoading(false);
+      fetchAllProducts();
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Gagal menghapus produk",
+      });
+      setShowConfirmDialog(false);
+
+      setDeleteLoading(false);
+    }
+  };
 
   const { products, loading, error, fetchAllProducts } = useProductListStore();
 
@@ -24,52 +52,72 @@ const MenuPage = () => {
     );
   }
 
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Daftar Menu</Text>
-          <Button
-            icon={() => <PlusIcon size={24} color={"#fff"} />}
-            mode="contained"
-            text="Tambah Menu"
-            style={{
-              backgroundColor: theme.colors.secondary,
-              borderRadius: 12,
-            }}
-            onPress={() => router.push("/menuForm")}
-          >
-            Tambah Menu
-          </Button>
-        </View>
-        <DataTable>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>Nama</DataTable.Title>
-            <DataTable.Title>Kategori</DataTable.Title>
-            <DataTable.Title>Deskripsi</DataTable.Title>
-            <DataTable.Title>Varian</DataTable.Title>
-            <DataTable.Title>Harga</DataTable.Title>
-            <DataTable.Title>Action</DataTable.Title>
-          </DataTable.Header>
+  const showDialogHandler = (id) => {
+    setSelectedId(id);
+    setShowConfirmDialog(true);
+  };
 
-          {products.map((product) => (
-            <DataTable.Row key={product.id}>
-              <DataTable.Cell>{product.name}</DataTable.Cell>
-              <DataTable.Cell>{product.category}</DataTable.Cell>
-              <DataTable.Cell>{product.description}</DataTable.Cell>
-              <DataTable.Cell>{product.variants.map((v) => v.variantTypeName)}</DataTable.Cell>
-              <DataTable.Cell>{product.base_price.toLocaleString("id-ID")}</DataTable.Cell>
-              <DataTable.Cell>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <PencilSquareIcon size={20} />
-                  <TrashIcon size={20} color={"red"} />
-                </View>
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-      </View>
-    </ScrollView>
+  return (
+    <>
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Daftar Menu</Text>
+            <Button
+              icon={() => <PlusIcon size={24} color={"#fff"} />}
+              mode="contained"
+              text="Tambah Menu"
+              style={{
+                backgroundColor: theme.colors.secondary,
+                borderRadius: 12,
+              }}
+              onPress={() => router.push("/menuForm")}
+            >
+              Tambah Menu
+            </Button>
+          </View>
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>Nama</DataTable.Title>
+              <DataTable.Title>Kategori</DataTable.Title>
+              <DataTable.Title>Deskripsi</DataTable.Title>
+              <DataTable.Title>Varian</DataTable.Title>
+              <DataTable.Title>Harga</DataTable.Title>
+              <DataTable.Title>Action</DataTable.Title>
+            </DataTable.Header>
+
+            {products.map((product) => (
+              <DataTable.Row key={product.id}>
+                <DataTable.Cell>{product.name}</DataTable.Cell>
+                <DataTable.Cell>{product.category}</DataTable.Cell>
+                <DataTable.Cell>{product.description}</DataTable.Cell>
+                <DataTable.Cell>{product.variants.map((v) => v.variantTypeName)}</DataTable.Cell>
+                <DataTable.Cell>{product.base_price.toLocaleString("id-ID")}</DataTable.Cell>
+                <DataTable.Cell>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    {/* <PencilSquareIcon size={20} /> */}
+                    <TrashIcon
+                      size={20}
+                      color={"red"}
+                      onPress={() => showDialogHandler(product.id)}
+                    />
+                  </View>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </View>
+      </ScrollView>
+      <ConfirmDialog
+        onDismiss={() => setShowConfirmDialog(false)}
+        visible={showConfirmDialog}
+        action={"Hapus"}
+        title={"Apakah anda yakin ingin menghapus produk ini?"}
+        loading={deleteLoading}
+        handler={deleteHandler}
+      />
+      <Toast />
+    </>
   );
 };
 

@@ -4,6 +4,7 @@ import SideBar from "../components/SideBar";
 import { View, StyleSheet } from "react-native";
 import ScanPrintDialog from "../components/ScanPrintDialog";
 import { en, registerTranslation } from "react-native-paper-dates";
+import Toast from "react-native-toast-message";
 
 registerTranslation("en", en); // Register the 'en' locale
 
@@ -21,25 +22,28 @@ const theme = {
 
 export default function Layout() {
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        {/* <ScanPrintDialog /> */}
-        <SideBar />
-        <View style={styles.content}>
-          {/* <Stack screenOptions={{ headerShown: false, animation: "none" }} /> */}
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false, animation: "none" }} />
-            <Stack.Screen name="orders" options={{ headerShown: false, animation: "none" }} />
-            <Stack.Screen name="menu" options={{ headerShown: false, animation: "none" }} />
-            <Stack.Screen
-              name="menuForm"
-              options={{ headerShown: true, animation: "none", title: "Tambah Produk" }}
-            />
-            <Stack.Screen name="expenses" options={{ headerShown: false, animation: "none" }} />
-          </Stack>
+    <>
+      <PaperProvider theme={theme}>
+        <View style={styles.container}>
+          {/* <ScanPrintDialog /> */}
+          <SideBar />
+          <View style={styles.content}>
+            {/* <Stack screenOptions={{ headerShown: false, animation: "none" }} /> */}
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false, animation: "none" }} />
+              <Stack.Screen name="orders" options={{ headerShown: false, animation: "none" }} />
+              <Stack.Screen name="menu" options={{ headerShown: false, animation: "none" }} />
+              <Stack.Screen name="dashboard" options={{ headerShown: false, animation: "none" }} />
+              <Stack.Screen
+                name="menuForm"
+                options={{ headerShown: true, animation: "none", title: "Tambah Produk" }}
+              />
+              <Stack.Screen name="expenses" options={{ headerShown: false, animation: "none" }} />
+            </Stack>
+          </View>
         </View>
-      </View>
-    </PaperProvider>
+      </PaperProvider>
+    </>
   );
 }
 

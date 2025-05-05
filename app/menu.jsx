@@ -83,7 +83,7 @@ const MenuPage = () => {
               <DataTable.Title>Deskripsi</DataTable.Title>
               <DataTable.Title>Varian</DataTable.Title>
               <DataTable.Title>Harga</DataTable.Title>
-              <DataTable.Title>Action</DataTable.Title>
+              <DataTable.Title style={{ flex: 0 }}>Aksi</DataTable.Title>
             </DataTable.Header>
 
             {products.map((product) => (
@@ -93,7 +93,7 @@ const MenuPage = () => {
                 <DataTable.Cell>{product.description}</DataTable.Cell>
                 <DataTable.Cell>{product.variants.map((v) => v.variantTypeName)}</DataTable.Cell>
                 <DataTable.Cell>{product.base_price.toLocaleString("id-ID")}</DataTable.Cell>
-                <DataTable.Cell>
+                <DataTable.Cell style={{ flex: 0 }}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     {/* <PencilSquareIcon size={20} /> */}
                     <TrashIcon

@@ -100,3 +100,14 @@ export const createOrder = async ({ orders, totalOrderPrice, outlet, kasir, paym
     console.error("Gagal membuat pesanan:", error);
   }
 };
+
+export const deleteOrder = async (id) => {
+  try {
+    const { data, error } = await supabase.from("orders").update({ is_active: false }).eq("id", id);
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

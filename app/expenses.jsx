@@ -152,7 +152,7 @@ const Expenses = () => {
               <DataTable.Title style={{ flex: 3 }}>Deskripsi</DataTable.Title>
               <DataTable.Title style={{ flex: 2 }}>Jumlah</DataTable.Title>
               <DataTable.Title style={{ flex: 2 }}>Tanggal</DataTable.Title>
-              <DataTable.Title style={{ flex: 1 }}>Aksi</DataTable.Title>
+              <DataTable.Title style={{ flex: 0 }}>Aksi</DataTable.Title>
             </DataTable.Header>
 
             {loading ? (
@@ -171,7 +171,7 @@ const Expenses = () => {
                     Rp. {expense.amount.toLocaleString("id-ID")}
                   </DataTable.Cell>
                   <DataTable.Cell style={{ flex: 2 }}>{expense.expense_date}</DataTable.Cell>
-                  <DataTable.Cell style={{ flex: 1 }}>
+                  <DataTable.Cell style={{ flex: 0 }}>
                     <View
                       style={{
                         flexDirection: "row",

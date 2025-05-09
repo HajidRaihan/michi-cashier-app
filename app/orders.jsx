@@ -180,6 +180,8 @@ const Orders = () => {
               <DataTable.Title>Total</DataTable.Title>
               {/* <DataTable.Title>Status</DataTable.Title> */}
               <DataTable.Title>Detail</DataTable.Title>
+              <DataTable.Title>Kasir</DataTable.Title>
+              <DataTable.Title>Outlet</DataTable.Title>
               <DataTable.Title style={{ flex: 0 }}>Aksi</DataTable.Title>
             </DataTable.Header>
 
@@ -197,6 +199,8 @@ const Orders = () => {
                       {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
                     </DataTable.Cell>
                     <DataTable.Cell>Rp. {order.total_price.toLocaleString("id-ID")}</DataTable.Cell>
+                    <DataTable.Cell>Rp. {order.kasir}</DataTable.Cell>
+                    <DataTable.Cell>Rp. {order.outlet}</DataTable.Cell>
                     {/* <DataTable.Cell>
                   <Chip
                     style={[styles.statusChip, { backgroundColor: getStatusColor(order.status) }]}

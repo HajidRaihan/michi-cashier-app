@@ -55,7 +55,7 @@ const RevenueCard = ({ title, subtitle }) => {
       subtitle={subtitle}
       left={() => (
         <View style={{ backgroundColor: "#E0F2FE", borderRadius: 24, padding: 8 }}>
-          <CurrencyDollarIcon size={24} color="#0284C7" />
+          <CurrencyDollarIcon size={24} color="#DC2626 " />
         </View>
       )}
       // right={(props) => <IconButton {...props} icon="dots-vertical" onPress={() => {}} />}

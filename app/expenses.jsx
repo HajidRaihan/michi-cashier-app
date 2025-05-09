@@ -10,14 +10,21 @@ import { useExpenseStore } from "../stores/expenseStore";
 import { useToastHandler } from "../hook/useToastHandler";
 import { deleteExpense } from "../services/expenseService";
 import ConfirmDialog from "../components/ConfirmDialog";
+import RevenueCard from "../components/RevenueCard";
+import { calculateRevenue } from "../services/revenueService";
+import { useOrderListStore } from "../stores/orderStore";
 
 const Expenses = () => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [numberOfItemsPerPageList] = useState([5, 10, 15]);
   const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+  const [totalOrders, setTotalOrders] = useState();
+  // const [totalPengeluaran, setTotalPengeluaran] = useState();
 
   const { expenses, totalExpense, fetchAllExpenses, loading, error } = useExpenseStore();
+  const { totalIncome, fetchAllOrders } = useOrderListStore();
+
   const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [expenseId, setExpenseId] = useState();
@@ -31,6 +38,7 @@ const Expenses = () => {
 
   useEffect(() => {
     fetchAllExpenses();
+    fetchAllOrders();
   }, []);
 
   const filterHandler = () => {
@@ -38,6 +46,7 @@ const Expenses = () => {
     const isoEndDate = endDate ? new Date(endDate).toISOString() : undefined;
 
     fetchAllExpenses(isoStartDate, isoEndDate);
+    fetchAllOrders(isoStartDate, isoEndDate);
   };
 
   const clearFilterHandler = () => {
@@ -71,6 +80,20 @@ const Expenses = () => {
     setExpenseId(id);
     setOpenConfirmDialog(true);
   };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const { totalOrderPrice, totalExpense } = await calculateRevenue();
+  //       console.log(totalOrderPrice, totalExpense);
+
+  //       setTotalOrders(totalOrderPrice);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <>
@@ -114,6 +137,32 @@ const Expenses = () => {
             Clear
           </Button>
         </View>
+        <View style={styles.revenueContainer}>
+          <RevenueCard
+            title="Pendapatan Kotor"
+            subtitle={totalIncome?.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}
+            bgIconColor="#E0F2FE"
+            iconColor="#0284C7"
+          />
+          <RevenueCard
+            title="Pendapatan Bersih"
+            subtitle={(totalIncome - totalExpense)?.toLocaleString("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            })}
+            bgIconColor="#DCFCE7"
+            iconColor="#16A34A"
+          />
+          <RevenueCard
+            title="Pengeluaran"
+            subtitle={totalExpense?.toLocaleString("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            })}
+            bgIconColor="#FEE2E2"
+            iconColor="#DC2626"
+          />
+        </View>
         <ConfirmDialog
           title="Apakah kamu ingin menghapus pengeluaran ini?"
           action="Hapus"
@@ -127,7 +176,6 @@ const Expenses = () => {
           <View style={styles.titleContainer}>
             <View>
               <Text style={styles.title}>Daftar Pengeluaran</Text>
-              <Text style={{ fontWeight: "bold" }}>Rp. {totalExpense.toLocaleString("id-ID")}</Text>
             </View>
             <Button
               icon={() => <PlusIcon size={24} color={"#fff"} />}
@@ -229,6 +277,12 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     backgroundColor: "#f5f5f5",
+  },
+  revenueContainer: {
+    flexDirection: "row",
+    gap: 10,
+    paddingLeft: 12,
+    flexWrap: "wrap",
   },
   loadingText: {
     marginTop: 10,

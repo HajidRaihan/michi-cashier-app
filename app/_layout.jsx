@@ -25,7 +25,7 @@ export default function Layout() {
     <>
       <PaperProvider theme={theme}>
         <View style={styles.container}>
-          {/* <ScanPrintDialog /> */}
+          <ScanPrintDialog />
           <SideBar />
           <View style={styles.content}>
             {/* <Stack screenOptions={{ headerShown: false, animation: "none" }} /> */}

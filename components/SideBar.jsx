@@ -28,20 +28,21 @@ const SideBar = () => {
       icon: NewspaperIcon,
     },
     {
-      name: "Menu",
-      route: "/menu",
-      icon: ListBulletIcon,
-    },
-    {
       name: "Pengeluaran",
       route: "/expenses",
       icon: DocumentIcon,
     },
     {
-      name: "Dashboard",
-      route: "/dashboard",
-      icon: ChartPieIcon,
+      name: "Menu",
+      route: "/menu",
+      icon: ListBulletIcon,
     },
+
+    // {
+    //   name: "Dashboard",
+    //   route: "/dashboard",
+    //   icon: ChartPieIcon,
+    // },
   ];
 
   useEffect(() => {

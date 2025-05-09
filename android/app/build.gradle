@@ -184,7 +184,7 @@ dependencies {
         implementation jscFlavor
     }
 
-        // implementation project(':react-native-thermal-receipt-printer-image-qr')
+        implementation project(':react-native-thermal-receipt-printer-image-qr')
 }
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

@@ -45,9 +45,9 @@ export default function Home() {
   useEffect(() => {
     if (activeCategory === "All") {
       setFilteredProduct(products);
-      return;
+    } else {
+      setFilteredProduct(products.filter((product) => product.category === activeCategory));
     }
-    setFilteredProduct(products.filter((product) => product.category === activeCategory));
   }, [activeCategory, products]);
 
   return (

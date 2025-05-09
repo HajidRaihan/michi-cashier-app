@@ -1,7 +1,7 @@
 import { getAllExpenses } from "./expenseService";
 import { getOrders } from "./orderService";
 
-export const calculateRevenue = async (month, year) => {
+export const calculateRevenue = async () => {
   const { orders } = await getOrders();
   const { expenses } = await getAllExpenses();
 

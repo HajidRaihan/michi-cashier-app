@@ -4,11 +4,16 @@ export const getAllExpenses = async (startDate, endDate) => {
   try {
     let query = supabase.from("expenses").select("*");
 
+    // Tambahkan filter tanggal berdasarkan kondisi yang tersedia
     if (startDate && endDate) {
       query = query.gte("expense_date", startDate).lte("expense_date", endDate);
+    } else if (startDate) {
+      query = query.gte("expense_date", startDate);
+    } else if (endDate) {
+      query = query.lte("expense_date", endDate);
     }
 
-    // Pastikan pengurutan dengan eksplisit mendeklarasikan columnnya
+    // Pengurutan berdasarkan tanggal pengeluaran
     const { data, error } = await query.order("expense_date", { ascending: false });
 
     if (error) throw error;

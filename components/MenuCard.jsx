@@ -8,12 +8,12 @@ const MenuCard = ({ handleProductClick, product }) => {
   return (
     <Card style={styles.card} mode="elevated">
       <View style={styles.content}>
-        <Image
+        {/* <Image
           source={{
             uri: "https://image.makewebeasy.net/makeweb/r_1920x1920/MptBqGPQV/DefaultData/menu_rice_bowl_steak_ayam_crispy_dari_ZHENGDA.jpg?v=202405291424",
           }}
           style={styles.menuImage}
-        />
+        /> */}
         <View style={styles.details}>
           <Text style={styles.title}>{product?.name}</Text>
           <Text style={styles.price}>Rp. {product?.base_price.toLocaleString("id-ID")}</Text>

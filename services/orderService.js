@@ -21,9 +21,13 @@ export const getOrders = async (startDate, endDate) => {
     order_items(*)
   `);
 
-  // Tambahkan filter rentang tanggal jika tersedia
+  // Filter berdasarkan kondisi startDate dan endDate
   if (startDate && endDate) {
     query = query.gte("created_at", startDate).lte("created_at", endDate);
+  } else if (startDate) {
+    query = query.gte("created_at", startDate);
+  } else if (endDate) {
+    query = query.lte("created_at", endDate);
   }
 
   const { data, error } = await query.order("created_at", { ascending: false });

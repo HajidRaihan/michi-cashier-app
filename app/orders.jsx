@@ -14,6 +14,8 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { Button } from "react-native-paper";
 import { format } from "date-fns";
 import { DatePickerInput } from "react-native-paper-dates";
+import { Dropdown } from "react-native-element-dropdown";
+
 import { TrashIcon } from "react-native-heroicons/outline";
 import { deleteOrder } from "../services/orderService";
 import Toast from "react-native-toast-message";
@@ -28,14 +30,21 @@ const Orders = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [orderId, setOrderId] = useState();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [selectedOutlet, setSelectedOutlet] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+
+  const outletList = [
+    { label: "Outlet 1", value: "Outlet 1" },
+    { label: "Outlet 2", value: "Outlet 2" },
+  ];
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
 
-  const { fetcAllOrders, orders, totalIncome, loading, error } = useOrderListStore();
+  const { fetchAllOrders, orders, totalIncome, loading, error } = useOrderListStore();
 
   useEffect(() => {
-    fetcAllOrders();
+    fetchAllOrders();
   }, []);
 
   const showDialogHandler = (id) => {
@@ -47,7 +56,7 @@ const Orders = () => {
     try {
       await deleteOrder(orderId);
       setOpenDialog(false);
-      fetcAllOrders();
+      fetchAllOrders();
       setDeleteLoading(false);
       Toast.show({
         type: "success",
@@ -68,13 +77,14 @@ const Orders = () => {
     const isoStartDate = startDate ? new Date(startDate).toISOString() : undefined;
     const isoEndDate = endDate ? new Date(endDate).toISOString() : undefined;
 
-    fetcAllOrders(isoStartDate, isoEndDate);
+    fetchAllOrders(isoStartDate, isoEndDate, selectedOutlet);
   };
 
   const clearFilterHandler = () => {
     setStartDate(null);
     setEndDate(null);
-    fetcAllOrders();
+    setSelectedOutlet(null);
+    fetchAllOrders();
   };
 
   useEffect(() => {
@@ -144,6 +154,25 @@ const Orders = () => {
             onChange={(d) => setEndDate(d)}
             inputMode="start"
           />
+          <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: theme.colors.primary }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={outletList}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? "Pilih Outlet" : "..."}
+            value={selectedOutlet}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={(item) => {
+              setSelectedOutlet(item.value);
+              setIsFocus(false);
+            }}
+          />
           <Button
             mode="outlined"
             icon="magnify"
@@ -167,7 +196,6 @@ const Orders = () => {
         </View>
         <View style={styles.container}>
           <Text style={styles.title}>Daftar Pesanan</Text>
-
           <View style={styles.totalIncomeContainer}>
             <Text style={styles.totalIncomeLabel}>Total Pendapatan: </Text>
             <Text style={styles.totalIncomeValue}>Rp. {totalIncome.toLocaleString("id-ID")}</Text>
@@ -179,9 +207,9 @@ const Orders = () => {
               <DataTable.Title>Tanggal</DataTable.Title>
               <DataTable.Title>Total</DataTable.Title>
               {/* <DataTable.Title>Status</DataTable.Title> */}
-              <DataTable.Title>Detail</DataTable.Title>
               <DataTable.Title>Kasir</DataTable.Title>
               <DataTable.Title>Outlet</DataTable.Title>
+              <DataTable.Title>Detail</DataTable.Title>
               <DataTable.Title style={{ flex: 0 }}>Aksi</DataTable.Title>
             </DataTable.Header>
 
@@ -199,8 +227,8 @@ const Orders = () => {
                       {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
                     </DataTable.Cell>
                     <DataTable.Cell>Rp. {order.total_price.toLocaleString("id-ID")}</DataTable.Cell>
-                    <DataTable.Cell>Rp. {order.kasir}</DataTable.Cell>
-                    <DataTable.Cell>Rp. {order.outlet}</DataTable.Cell>
+                    <DataTable.Cell>{order.kasir}</DataTable.Cell>
+                    <DataTable.Cell>{order.outlet}</DataTable.Cell>
                     {/* <DataTable.Cell>
                   <Chip
                     style={[styles.statusChip, { backgroundColor: getStatusColor(order.status) }]}
@@ -457,6 +485,15 @@ const styles = StyleSheet.create({
     height: 24,
     alignItems: "center",
     justifyContent: "center",
+  },
+  dropdown: {
+    height: 50,
+    width: 120,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginTop: 5,
+    borderRadius: 4,
+    paddingHorizontal: 8,
   },
 });
 

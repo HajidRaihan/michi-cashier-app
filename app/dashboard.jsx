@@ -28,6 +28,8 @@ const Dashboard = () => {
         <RevenueCard
           title="Pendapatan Kotor"
           subtitle={totalOrders?.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}
+          bgIconColor="#E0F2FE"
+          iconColor="#0284C7"
         />
         <RevenueCard
           title="Pengeluaran"
@@ -35,6 +37,8 @@ const Dashboard = () => {
             style: "currency",
             currency: "IDR",
           })}
+          bgIconColor="#FEE2E2"
+          iconColor="#DC2626"
         />
         <RevenueCard
           title="Pendapatan Bersih"
@@ -42,20 +46,22 @@ const Dashboard = () => {
             style: "currency",
             currency: "IDR",
           })}
+          bgIconColor="#DCFCE7"
+          iconColor="#16A34A"
         />
       </View>
     </View>
   );
 };
 
-const RevenueCard = ({ title, subtitle }) => {
+const RevenueCard = ({ title, subtitle, bgIconColor, iconColor }) => {
   return (
     <Card.Title
       title={title}
       subtitle={subtitle}
       left={() => (
-        <View style={{ backgroundColor: "#E0F2FE", borderRadius: 24, padding: 8 }}>
-          <CurrencyDollarIcon size={24} color="#DC2626 " />
+        <View style={{ backgroundColor: bgIconColor, borderRadius: 24, padding: 8 }}>
+          <CurrencyDollarIcon size={24} color={iconColor} />
         </View>
       )}
       // right={(props) => <IconButton {...props} icon="dots-vertical" onPress={() => {}} />}

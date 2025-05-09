@@ -128,11 +128,15 @@ export const useOrderListStore = create((set) => ({
   loading: false,
   error: null,
 
-  fetcAllOrders: async (startDate, endDate) => {
+  fetchAllOrders: async (startDate, endDate, outlet) => {
     set({ loading: true, error: null });
 
     try {
       const res = await getOrders(startDate, endDate);
+
+      if (outlet) {
+        res.orders = res.orders.filter((order) => order.outlet === outlet);
+      }
 
       console.log("res", res.orders);
       console.log(JSON.stringify(res.orders, null, 2));

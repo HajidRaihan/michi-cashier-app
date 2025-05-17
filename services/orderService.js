@@ -16,10 +16,15 @@ export const getOrderItems = async () => {
 };
 
 export const getOrders = async (startDate, endDate) => {
-  let query = supabase.from("orders").select(`
-    *, 
-    order_items(*)
-  `);
+  let query = supabase
+    .from("orders")
+    .select(
+      `
+      *, 
+      order_items(*)
+    `
+    )
+    .eq("is_active", true); // Filter hanya yang is_active = true
 
   // Filter berdasarkan kondisi startDate dan endDate
   if (startDate && endDate) {

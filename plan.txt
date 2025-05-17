@@ -1,5 +1,8 @@
 todo : 
-- berikan keterangan untuk outlet nya.
-- input pengeluaran setiap belanja. untuk hitung keuntungan (HPP).
-- filter order harian, bulanan, dan tahunan
-- crud product, variant
+- Kalau sudah di simpan, detail pesanan dihapus
+- perbaiki struk
+
+
+done : 
+- order list tidak bisa terhapus
+- default list pesanan menjadi hari ini

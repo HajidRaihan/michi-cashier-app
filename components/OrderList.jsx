@@ -72,8 +72,10 @@ const OrderList = () => {
     //   return;
     // }
 
+    console.log("orders sembarang", orders);
+
     try {
-      await printStruk(orders);
+      await printStruk(orders, outlet, kasir, paymentType);
     } catch (error) {
       console.error("Error printing:", error);
     }

@@ -38,13 +38,19 @@ const Orders = () => {
     { label: "Outlet 2", value: "Outlet 2" },
   ];
 
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const { fetchAllOrders, orders, totalIncome, loading, error } = useOrderListStore();
 
   useEffect(() => {
-    fetchAllOrders();
+    const startOfDay = new Date(startDate);
+    startOfDay.setHours(0, 0, 0, 0); // 00:00:00
+
+    const endOfDay = new Date(endDate);
+    endOfDay.setHours(23, 59, 59, 999); // 23:59:59
+
+    fetchAllOrders(startOfDay.toISOString(), endOfDay.toISOString(), selectedOutlet);
   }, []);
 
   const showDialogHandler = (id) => {
@@ -74,10 +80,13 @@ const Orders = () => {
   };
 
   const filterHandler = () => {
-    const isoStartDate = startDate ? new Date(startDate).toISOString() : undefined;
-    const isoEndDate = endDate ? new Date(endDate).toISOString() : undefined;
+    const startOfDay = new Date(startDate);
+    startOfDay.setHours(0, 0, 0, 0); // 00:00:00
 
-    fetchAllOrders(isoStartDate, isoEndDate, selectedOutlet);
+    const endOfDay = new Date(endDate);
+    endOfDay.setHours(23, 59, 59, 999); // 23:59:59
+
+    fetchAllOrders(startOfDay.toISOString(), endOfDay.toISOString(), selectedOutlet);
   };
 
   const clearFilterHandler = () => {

@@ -138,8 +138,8 @@ export const useOrderListStore = create((set) => ({
         res.orders = res.orders.filter((order) => order.outlet === outlet);
       }
 
-      console.log("res", res.orders);
-      console.log(JSON.stringify(res.orders, null, 2));
+      // console.log("res", res.orders);
+      // console.log(JSON.stringify(res.orders, null, 2));
 
       set({
         orders: res.orders,

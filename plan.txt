@@ -1,8 +1,10 @@
 todo : 
-- Kalau sudah di simpan, detail pesanan dihapus
-- perbaiki struk
+- perbaiki struk (sudah tapi belum di test)
 
 
 done : 
 - order list tidak bisa terhapus
 - default list pesanan menjadi hari ini
+- Kalau sudah di simpan, detail pesanan dihapus
+
+

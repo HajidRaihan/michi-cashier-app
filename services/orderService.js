@@ -41,9 +41,11 @@ export const getOrders = async (startDate, endDate) => {
 
   // Hitung total pendapatan dari order_items
   const totalIncome = data?.reduce((acc, order) => {
-    const orderTotal = order.order_items?.reduce((sum, item) => sum + (item.total_price || 0), 0);
-    return acc + orderTotal;
+    // const orderTotal = order.order_items?.reduce((sum, item) => sum + (item.total_price || 0), 0);
+    // return acc + orderTotal;
+    return acc + order.total_price;
   }, 0);
+  console.log("orders ini :", data);
 
   return {
     orders: data,

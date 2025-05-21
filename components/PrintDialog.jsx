@@ -19,10 +19,11 @@ const PrintDialog = ({
   paymentType,
   setPaymentType,
 }) => {
-  const [cash, setCash] = useState(0);
-  const [kembalian, setKembalian] = useState(0);
+  // const [cash, setCash] = useState(0);
+  // const [kembalian, setKembalian] = useState(0);
 
-  const { kasir, setKasir, outlet, setOutlet } = useKasirStore();
+  const { kasir, setKasir, outlet, setOutlet, cash, setCash, kembalian, setKembalian } =
+    useKasirStore();
 
   useEffect(() => {
     setKembalian(cash - totalOrderPrice);

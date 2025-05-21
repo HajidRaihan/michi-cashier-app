@@ -22,7 +22,7 @@ const OrderList = () => {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToastHandler();
 
-  const { kasir, outlet } = useKasirStore();
+  const { kasir, outlet, cash, kembalian } = useKasirStore();
 
   const paymentList = [
     { label: "Cash", value: "Cash" },
@@ -74,8 +74,18 @@ const OrderList = () => {
 
     console.log("orders sembarang", orders);
 
+    const data = {
+      orders,
+      totalOrderPrice,
+      outlet,
+      kasir,
+      payment_type: paymentType,
+      cash,
+      kembalian,
+    };
+
     try {
-      await printStruk(orders, outlet, kasir, paymentType);
+      await printStruk(data);
     } catch (error) {
       console.error("Error printing:", error);
     }

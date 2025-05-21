@@ -5,9 +5,10 @@ import { Dropdown } from "react-native-element-dropdown";
 import { useVariantStore } from "../stores/variantStore";
 import { createProduct } from "../services/productService";
 import { generateTimeBasedId } from "../lib/generateId";
+import { useRouter } from "expo-router";
 
 const data = [
-  { label: "Chicken Crispy", value: "CHicken Crispy" },
+  { label: "Chicken Crispy", value: "Chicken Crispy" },
   { label: "Chicken Pop", value: "Chicken Pop" },
   { label: "Chicken Katsu", value: "Chicken Katsu" },
   { label: "Mie Cian", value: "Mie Cian" },
@@ -16,6 +17,8 @@ const data = [
 ];
 const MenuForm = () => {
   const theme = useTheme();
+  const router = useRouter();
+
   const [kategori, setKategori] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -53,6 +56,7 @@ const MenuForm = () => {
       const res = await createProduct(data, selectedVariant);
       console.log(res);
       setLoadingCreate(false);
+      router.push("/menu");
     } catch (err) {
       console.log(err);
       setLoadingCreate(false);

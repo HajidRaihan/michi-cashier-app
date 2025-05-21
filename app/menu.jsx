@@ -90,8 +90,10 @@ const MenuPage = () => {
               <DataTable.Row key={product.id}>
                 <DataTable.Cell>{product.name}</DataTable.Cell>
                 <DataTable.Cell>{product.category}</DataTable.Cell>
-                <DataTable.Cell>{product.description}</DataTable.Cell>
-                <DataTable.Cell>{product.variants.map((v) => v.variantTypeName)}</DataTable.Cell>
+                <DataTable.Cell>{product.description ? product.description : "-"}</DataTable.Cell>
+                <DataTable.Cell>
+                  {product.variants ? product.variants.map((v) => v.variantTypeName) : "-"}
+                </DataTable.Cell>
                 <DataTable.Cell>{product.base_price.toLocaleString("id-ID")}</DataTable.Cell>
                 <DataTable.Cell style={{ flex: 0 }}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>

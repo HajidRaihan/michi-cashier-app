@@ -140,7 +140,9 @@ export const fetchProductsWithVariants = async () => {
     if (error) throw error;
 
     // console.log({ products });
-    // console.log(JSON.stringify(products, null, 3));
+    console.log(JSON.stringify(products, null, 3));
+
+    // console.log("products", products);
 
     // Menyusun data dalam format yang lebih mudah digunakan
     const formattedProducts = products.map((product) => {
@@ -174,24 +176,56 @@ export const fetchProductsWithVariants = async () => {
   }
 };
 
+// export const createProduct = async (product, variant_id) => {
+//   console.log({ product });
+//   try {
+//     const { data, error } = await supabase.from("products").insert([product]).select("*");
+
+//     if (error) throw error;
+
+//     const { data: variants, error: variantError } = await supabase
+//       .from("product_variant_types")
+//       .insert({
+//         id: generateTimeBasedId(),
+//         product_id: data[0].id,
+//         variant_type_id: variant_id,
+//       });
+
+//     if (variantError) throw variantError;
+
+//     console.log("Product berhasil ditambahkan", { data, variants });
+//     return data;
+//   } catch (err) {
+//     console.error("Error creating product:", err);
+//     throw err;
+//   }
+// };
+
 export const createProduct = async (product, variant_id) => {
   console.log({ product });
+
   try {
     const { data, error } = await supabase.from("products").insert([product]).select("*");
 
     if (error) throw error;
 
-    const { data: variants, error: variantError } = await supabase
-      .from("product_variant_types")
-      .insert({
-        id: generateTimeBasedId(),
-        product_id: data[0].id,
-        variant_type_id: variant_id,
-      });
+    // Jika variant_id ada (tidak null dan tidak kosong), baru insert ke product_variant_types
+    if (variant_id) {
+      const { data: variants, error: variantError } = await supabase
+        .from("product_variant_types")
+        .insert({
+          id: generateTimeBasedId(),
+          product_id: data[0].id,
+          variant_type_id: variant_id,
+        });
 
-    if (variantError) throw variantError;
+      if (variantError) throw variantError;
 
-    console.log("Product berhasil ditambahkan", { data, variants });
+      console.log("Product dan variant berhasil ditambahkan", { data, variants });
+    } else {
+      console.log("Product berhasil ditambahkan tanpa variant", { data });
+    }
+
     return data;
   } catch (err) {
     console.error("Error creating product:", err);

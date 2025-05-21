@@ -45,12 +45,12 @@ export default MenuCard;
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 8,
+    // marginVertical: 8,
     borderRadius: 16,
     padding: 20,
     elevation: 2,
     backgroundColor: "#fff",
-    width: 280,
+    width: 250,
   },
   content: {
     flexDirection: "row",

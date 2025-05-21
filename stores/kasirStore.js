@@ -5,4 +5,8 @@ export const useKasirStore = create((set) => ({
   setKasir: (kasir) => set({ kasir }),
   outlet: null,
   setOutlet: (outlet) => set({ outlet }),
+  cash: 0,
+  setCash: (cash) => set({ cash }),
+  kembalian: 0,
+  setKembalian: (kembalian) => set({ kembalian }),
 }));

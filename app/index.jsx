@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     padding: 2,
     gap: 16,
     marginTop: 10,
+    marginBottom: 10,
   },
   menuTitle: {
     fontSize: 24,

@@ -13,7 +13,6 @@ import Toast from "react-native-toast-message";
 import { useToastHandler } from "../hook/useToastHandler";
 
 const OrderList = () => {
-  const theme = useTheme();
   const { orders, totalOrderPrice, clearOrders } = useOrderStore();
   const [openPrintDialog, setOpenPrintDialog] = useState(false);
   const [openOutletDialog, setOpenOutletDialog] = useState(false);
@@ -22,7 +21,7 @@ const OrderList = () => {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToastHandler();
 
-  const { kasir, outlet, cash, kembalian } = useKasirStore();
+  const { kasir, outlet, cash, kembalian, customer } = useKasirStore();
 
   const paymentList = [
     { label: "Cash", value: "Cash" },
@@ -49,6 +48,7 @@ const OrderList = () => {
       outlet,
       kasir,
       payment_type: paymentType,
+      customer,
     };
     try {
       const order = await createOrder(data);
@@ -82,6 +82,7 @@ const OrderList = () => {
       payment_type: paymentType,
       cash,
       kembalian,
+      customer,
     };
 
     try {

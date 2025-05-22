@@ -9,4 +9,6 @@ export const useKasirStore = create((set) => ({
   setCash: (cash) => set({ cash }),
   kembalian: 0,
   setKembalian: (kembalian) => set({ kembalian }),
+  customer: null,
+  setCustomer: (customer) => set({ customer }),
 }));

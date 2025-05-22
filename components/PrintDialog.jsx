@@ -22,8 +22,18 @@ const PrintDialog = ({
   // const [cash, setCash] = useState(0);
   // const [kembalian, setKembalian] = useState(0);
 
-  const { kasir, setKasir, outlet, setOutlet, cash, setCash, kembalian, setKembalian } =
-    useKasirStore();
+  const {
+    kasir,
+    setKasir,
+    outlet,
+    setOutlet,
+    cash,
+    setCash,
+    kembalian,
+    setKembalian,
+    customer,
+    setCustomer,
+  } = useKasirStore();
 
   useEffect(() => {
     setKembalian(cash - totalOrderPrice);
@@ -73,6 +83,14 @@ const PrintDialog = ({
                 mode="outlined"
                 value={kasir}
                 onChangeText={(text) => setKasir(text)}
+                style={styles.input}
+              />
+
+              <TextInput
+                label="Nama Customer"
+                mode="outlined"
+                value={customer}
+                onChangeText={(text) => setCustomer(text)}
                 style={styles.input}
               />
 

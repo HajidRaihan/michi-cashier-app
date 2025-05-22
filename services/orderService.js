@@ -53,7 +53,14 @@ export const getOrders = async (startDate, endDate) => {
   };
 };
 
-export const createOrder = async ({ orders, totalOrderPrice, outlet, kasir, payment_type }) => {
+export const createOrder = async ({
+  orders,
+  totalOrderPrice,
+  outlet,
+  kasir,
+  payment_type,
+  customer,
+}) => {
   // const { orders, totalOrderPrice } = useOrderStore.getState();
 
   if (orders.length === 0) {
@@ -72,6 +79,7 @@ export const createOrder = async ({ orders, totalOrderPrice, outlet, kasir, paym
     status: "",
     kasir: kasir,
     outlet: outlet,
+    customer: customer,
   };
 
   try {

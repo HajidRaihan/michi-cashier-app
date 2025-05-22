@@ -299,6 +299,7 @@ const Orders = () => {
                           ))}
                         </ScrollView>
 
+                        <Text style={styles.paymentMethod}>Customer: {order.customer}</Text>
                         <View style={styles.orderSummary}>
                           <Text style={styles.paymentMethod}>
                             Pembayaran: {order.payment_type?.toUpperCase()}
